@@ -10,7 +10,7 @@ module "s3_bucket" {
     aws = aws.s3_bucket_provider
   }
 
-  bucket = "avengers"
+  bucket = "matrix-prod"
   acl    = "private"
 
   control_object_ownership = true

@@ -42,8 +42,8 @@ module "matrix_eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19.0"
 
-  cluster_name    = "matrix-eks"
-  cluster_version = "1.28"
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
 
   subnet_ids                     = module.matrix_vpc.private_subnets
   vpc_id                         = module.matrix_vpc.vpc_id
@@ -59,7 +59,7 @@ module "matrix_eks" {
   }
 
   tags = {
-    Name        = "matrix-eks-${terraform.workspace}"
+    Name        = "matrix-stg-${terraform.workspace}"
     Environment = "stg"
   }
 }
