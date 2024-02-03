@@ -217,10 +217,10 @@ As informações de conexão ao banco de dados devem ser protegidas usando recur
 
 **Entregáveis:**
 
-1.Arquivos Terraform para configurar o bucket S3.
-2.Configurações da pipeline CI/CD Jenkins.
-3.Arquivos de configuração da aplicação no Kubernetes (Helm templates, values, etc.).
-4.Documentação detalhada dos passos executados.
+-  Arquivos Terraform para configurar o bucket S3.
+- Configurações da pipeline CI/CD Jenkins.
+- Arquivos de configuração da aplicação no Kubernetes (Helm templates, values, etc.).
+- Documentação detalhada dos passos executados.
 
 **Tecnologias Utilizadas:**
 
