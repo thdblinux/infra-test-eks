@@ -198,6 +198,7 @@ PS: Se tudo ocorrer perfeitamente bem no ambiente de `stage,` agora podemos repe
  ## Resumo do Projeto 
 
 **Descrição**
+
 Este projeto visa configurar a infraestrutura para a aplicação "descoshop", que será implantada em dois ambientes: teste e produção, utilizando clusters Kubernetes. A entrega do projeto envolve a criação de arquivos de configuração, configuração de fluxo de integração contínua e implementação de recursos AWS.
 
 **Ambiente**
