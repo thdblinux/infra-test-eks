@@ -67,6 +67,29 @@ https://www.jenkins.io/doc/book/installing/kubernetes/
 - kubernetes
 - kubernetes cli
 
+Configure as credenciais do Docker e do kubeconfig para permitir que o Jenkins interaja com a pipeline.
+
+1. **Credenciais do Docker:**
+- Certifique-se de ter o Docker instalado em seu ambiente Jenkins.
+- Acesse o Jenkins e vá para o painel de administração.
+- No painel de administração, clique em "Credenciais" e, em seguida, "Sistema".
+-  Adicione uma nova credencial, escolhendo o tipo apropriado para as credenciais do Docker (por exemplo, "Nome de usuário e senha" ou "Token de acesso").
+-  Forneça as informações necessárias, como nome de usuário, senha ou token, e salve as credenciais.
+  
+2.**kubeconfig:**
+- Garanta que o kubectl (cliente Kubernetes) esteja instalado no ambiente Jenkins.
+- No Jenkins, vá para o painel de administração e clique em "Credenciais" e, em seguida, "Sistema".
+- Adicione uma nova credencial, escolhendo o tipo "Arquivo de texto secreto".
+- Copie o conteúdo do seu arquivo kubeconfig para o campo de texto ou faça upload do arquivo diretamente.
+- Salve as credenciais.
+
+3.Configuração na Pipeline:
+
+- Abra ou crie o arquivo Jenkinsfile da sua pipeline.
+- Adicione etapas para configurar as credenciais recém-criadas.
+- Certifique-se de substituir 'seu-id-de-credencial-docker' e 'seu-id-de-credencial-kubeconfig' pelos IDs reais das credenciais criadas anteriormente.
+- 
+
 ```yaml
 pipeline {
     agent any
