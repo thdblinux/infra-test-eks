@@ -226,4 +226,27 @@ As informações de conexão ao banco de dados devem ser protegidas usando recur
 
 Kubernetes, Docker, Terraform, Helm, GitHub, CI/CD,Argocd, e recursos AWS.
 
+## Links úteis para a documentação das tecnologias utilizadas no projeto:
+
+- [Jenkins Pipeline Syntax](https://www.jenkins.io/doc/book/pipeline/syntax/)
+- [Docker Builder Reference](https://docs.docker.com/engine/reference/builder/)
+- [Docker Postgres Sample](https://docs.docker.com/samples/postgres/)
+- [Docker Postgres Image](https://hub.docker.com/_/postgres)
+- [Terraform AWS Provider Workspace Resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/workspaces_workspace)
+- [Terraform AWS Getting Started](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/aws-variables)
+- [Terraform AWS Resource Tagging Guide](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/guides/resource-tagging)
+- [Helm Installation Guide](https://helm.sh/docs/intro/install/)
+- [Terraform AWS VPC Module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/2.15.0)
+- [Terraform AWS EKS Module](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest)
+- [Terraform AWS S3 Bucket Module](https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest)
+- [Terraform Configuration Language Guide](https://developer.hashicorp.com/terraform/tutorials/configuration-language/variables)
+- [Terraform Language Values and Variables](https://developer.hashicorp.com/terraform/language/values/variables)
+- [Go Development Use Cases](https://go.dev/solutions/use-cases)
+- [Kubernetes Nginx Ingress Configuration](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/)
+- [Artifact Hub](https://artifacthub.io/)
+- [EKS Workshop](https://archive.eksworkshop.com/intermediate/290_argocd/install/)
+- [ArgoCD Documentation](https://argo-cd.readthedocs.io/en/stable/)
+- [GitHub Repository](https://github.com/)
+
+
 
