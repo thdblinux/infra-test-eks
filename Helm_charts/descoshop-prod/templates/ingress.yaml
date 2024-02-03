@@ -1,25 +1,25 @@
+# ingress.yaml
+
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-descoshop-app
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    cert-manager.io/cluster-issuer: "letsencrypt-staging"  
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
 spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - devopsmt.decoshop.stg.descomplica.com.br
+    - descoshop.stg.descomplica.devopsmt.com.br.
   rules:
-  {{- range .Values.descoshop.ingress }}
-  - host: {{ .host }}  
+  - host: descoshop.stg.descomplica.devopsmt.com.br.
     http:
       paths:
-      - path: /  
+      - path: /
         pathType: Prefix
         backend:
           service:
-            name: {{ $.Release.Name }}-descoshop-app
+            name: {{ .Release.Name }}-descoshop-app
             port:
               number: 80
-  {{- end }}

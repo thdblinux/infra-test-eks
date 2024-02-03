@@ -27,7 +27,7 @@ module "matrix_vpc" {
 
   tags = {
     "kubernetes.io/cluster/matrix-eks" = "shared"
-    "Environment"                     = "stg"
+    "Environment"                      = "stg"
   }
 
   public_subnet_tags = {

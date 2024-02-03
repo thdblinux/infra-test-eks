@@ -1,0 +1,24 @@
+# Ambiente de Testes
+staging:
+  environment: "staging"
+  url: "descoshop.stg.descomplica.com.br"
+  database:
+    server: "descoshop-stg.rds.aws.amazon.com"
+    port: 5432
+    name: "descoshop-stg"
+    user: "descoshop"
+    password: "tonystark@123"
+  replicas:
+    min: 1
+    max: 4
+  resources:
+    request:
+      cpu: "200m"
+      memory: "192Mi"
+    limit:
+      cpu: "400m"
+      memory: "512Mi"
+    env:    
+      GOOGLE_RECAPTCHA_URL: "https://google.com/recaptcha/api"
+      ENABLE_RECAPTCHA: true
+      BUCKET_NFE: ""
