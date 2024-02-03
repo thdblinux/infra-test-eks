@@ -194,3 +194,35 @@ PS: Se tudo ocorrer perfeitamente bem no ambiente de `stage,` agora podemos repe
  terraform destroy
  ``` 
  Este comando irá remover todos os recursos que foram provisionados na AWS, garantindo que você não seja cobrado por nada.
+
+ ## Resumo do Projeto 
+
+**Descrição**
+Este projeto visa configurar a infraestrutura para a aplicação "descoshop", que será implantada em dois ambientes: teste e produção, utilizando clusters Kubernetes. A entrega do projeto envolve a criação de arquivos de configuração, configuração de fluxo de integração contínua e implementação de recursos AWS.
+
+**Ambiente**
+- Ambiente de Testes:` descoshop.stg.descomplica.com.br`
+- Database: `descoshop-stg.rds.aws.amazon.com`
+- Pods: 1 a 4, CPU/Memory: request 200m/192Mi, limit 400m/512Mi
+- Variáveis de Ambiente: GOOGLE_RECAPTCHA_URL, ENABLE_RECAPTCHA, BUCKET_NFE
+- Ambiente de Produção: `descoshop.descomplica.com.br`
+- Database: `descoshop-prd.rds.aws.amazon.com`
+- Pods: 4 a 10, CPU/Memory: request 200m/192Mi, limit 400m/512Mi
+- Variáveis de Ambiente: GOOGLE_RECAPTCHA_URL, ENABLE_RECAPTCHA, BUCKET_NFE
+
+**Segurança:**
+
+As informações de conexão ao banco de dados devem ser protegidas usando recursos seguros do Kubernetes. Um bucket S3 privado será criado para armazenar notas fiscais eletrônicas, com regras de acesso definidas.
+
+**Entregáveis:**
+
+1.Arquivos Terraform para configurar o bucket S3.
+2.Configurações da pipeline CI/CD Jenkins.
+3.Arquivos de configuração da aplicação no Kubernetes (Helm templates, values, etc.).
+4.Documentação detalhada dos passos executados.
+
+**Tecnologias Utilizadas:**
+
+Kubernetes, Docker, Terraform, Helm, GitHub, CI/CD,Argocd, e recursos AWS.
+
+
