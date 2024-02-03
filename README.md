@@ -247,6 +247,7 @@ Kubernetes, Docker, Terraform, Helm, GitHub, CI/CD,Argocd, e recursos AWS.
 - [EKS Workshop](https://archive.eksworkshop.com/intermediate/290_argocd/install/)
 - [ArgoCD Documentation](https://argo-cd.readthedocs.io/en/stable/)
 - [GitHub Repository](https://github.com/)
+- [Cert-Manager](https://cert-manager.io/)
 
 
 
