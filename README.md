@@ -336,5 +336,6 @@ Kubernetes, Docker, Terraform, Helm, GitHub, CI/CD,Argocd, e recursos AWS.
 - [GitHub Repository](https://github.com/)
 - [Cert-Manager](https://cert-manager.io/)
 
+# Postmortem SLA, SLO, SLI e Erro Budget
 
-
+Link para meus artigos sobre SRE e DevOps [Medium](https://medium.com/@marciothadeu1984/sre-engenharia-de-confiabilidade-sla-slo-sli-e-erro-budget-entendendo-a-import%C3%A2ncia-e-6ef1d732fb53)
