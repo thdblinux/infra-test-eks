@@ -63,8 +63,52 @@ Ao implementar essas soluções em conjunto, o `Ingress-Nginx Controller`e o `Ce
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/aws/deploy.yaml
 ```
--  
-Agora, vamos criar um certificado para nossa aplicação usando o arquivo de configuração fornecido pelo Cert-Manager.
+1.**Instalar o Ingress-Nginx Controller com Helm**
+   
+É recomendado que no ambiente de produção o Ingress-Nginx Controller seja instalado com Helm.
+
+Utilize o seguinte comando Helm para instalar o Ingress-Nginx Controller no namespace ingress-nginx:
+
+```sh
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
+```
+
+Este comando instalará o controlador Ingress-Nginx no namespace ingress-nginx e criará o namespace se ele ainda não existir.
+Este comando é idempotente, o que significa que ele instalará o controlador se ainda não estiver instalado ou o atualizará se já estiver instalado.
+
+2.**Verificar a instalação:**
+
+```sh
+kubectl wait --namespace ingress-nginx \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/component=controller \
+  --timeout=120s
+```
+Isso garante que o controlador esteja pronto e em execução antes de prosseguir.
+
+3. **Configurar o Firewall:**
+
+Certifique-se de configurar o firewall para permitir o tráfego nas portas necessárias. O controlador Ingress-Nginx geralmente requer as portas 80 e 443 abertas.
+
+Para ver quais portas estão sendo usadas, execute:
+
+```sh
+kubectl -n ingress-nginx get pod -o yaml
+```
+Em geral, é necessário abrir a Porta 8443 entre todos os hosts nos quais os nós do Kubernetes estão em execução, usada para o controlador de admissão Ingress-Nginx.
+
+5. **Testar localmente:**
+
+```sh
+kubectl port-forward --namespace=ingress-nginx service/ingress-nginx-controller 8080:80
+```
+Agora, você pode acessar a sua aplicação localmente usando` http://localhost:8080`.
+
+Lembre-se de substituir `NOME_DO_CLUSTER` e `SUA_REGIAO_AWS` pelos valores específicos do seu ambiente `AWS EKS.` Certifique-se de revisar a documentação para obter informações mais detalhadas e ajustar conforme necessário para atender aos requisitos específicos do seu ambiente.
+
+### Agora, vamos criar um certificado para nossa aplicação usando o arquivo de configuração fornecido pelo Cert-Manager.
   
 ```yaml
 apiVersion: cert-manager.io/v1
