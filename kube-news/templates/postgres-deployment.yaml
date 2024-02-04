@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-postgre
+spec:
+  replicas: {{ .Values.postgre.replicas.min }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-postgre
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-postgre
+    spec:
+      containers:
+      - name: postgre
+        image: postgres:{{ .Values.postgre.tag }}
+        ports:
+        - containerPort: 5432
+        resources:
+          requests:
+            memory: {{ .Values.postgre.resources.request.memory }}
+            cpu: {{ .Values.postgre.resources.request.cpu }}
+          limits:
+            memory: {{ .Values.postgre.resources.limit.memory }}
+            cpu: {{ .Values.postgre.resources.limit.cpu }}
+        env:
+        - name: POSTGRES_DB
+          value: {{ .Values.postgre.credentials.dbName }}
+        - name: POSTGRES_USER
+          value: {{ .Values.postgre.credentials.userName }}
+        - name: POSTGRES_PASSWORD
+          value: {{ .Values.postgre.credentials.usePwd }}
+        # - name: GOOGLE_RECAPTCHA_URL
+        #   value: {{ .Values.postgre.env.GOOGLE_RECAPTCHA_URL }}
+        # - name: ENABLE_RECAPTCHA
+        #   value: {{ .Values.postgre.env.ENABLE_RECAPTCHA }}
+        # - name: BUCKET_NFE
+        #   value: {{ .Values.postgre.env.BUCKET_NFE }}
