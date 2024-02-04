@@ -4,6 +4,7 @@ metadata:
   name: descoshop
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
   - http:
