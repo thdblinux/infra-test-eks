@@ -50,7 +50,42 @@ Use um comando da `AWS` para interagir com o cluster via `CLI` usando o `kubectl
 ```sh
 aws eks update-kubeconfig --region region-code --name my-cluster
 ``` 
-**Step-2:** **Criando o CI com Jenkins**
+
+**Step-2:** **Configurando O  Ingress-Nginx Controller e o cert-manager**
+
+Como vamos expor a nossa aplicação para fora do cluste usaremos um `dominio` e um servidro web chamado `Nginx` ele ira garantir que a nossa aplicaç~ao funcione dentro do cluster de maneira segura e eficiente. O `Ingress-Nginx Controller` atua como um componente crucial para gerenciar o roteamento de tráfego externo para os serviços internos do cluster `Kubernetes`.
+
+Além disso, para garantir uma comunicação segura e estabelecer uma conexão `HTTPS `confiável, utilizaremos o` Cert-Manager`. O Cert-Manager é uma ferramenta especializada em automatizar a emissão e renovação de certificados` TLS,` essenciais para garantir a `segurança` da transmissão de dados entre o servidor` web Nginx` e os usuários finais.
+
+Ao implementar essas soluções em conjunto, o `Ingress-Nginx Controller`e o `Cert-Manager `proporcionam uma infraestrutura robusta para a exposição segura da nossa aplicação. O `Ingress-Nginx `direciona o `tráfego externo `para os serviços internos, enquanto o `Cert-Manager `automatiza a gestão dos certificados` TLS`, garantindo a `integridade` e `segurança `das comunicações.
+
+- Instalando um Ingress Controller Vamos continuar usando o Nginx Ingress Controller como exemplo, que é amplamente adotado e bem documentado.
+```sh
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/aws/deploy.yaml
+```
+-  
+Agora, vamos criar um certificado para nossa aplicação usando o arquivo de configuração fornecido pelo Cert-Manager.
+  
+```yaml
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: marciothadeu1984@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+```
+OBS:: Nos ambientes de Produção, não declaramos "staging" dentro do endereço do servidor https. Os arquivos de configuração do cert-manager e o comando para instalar o Nginx Ingress Controller podem ser declarados na pipeline.O cert-manager pode ser usado junto aos aqruivos de configuração do Helm. 
+
+
+**Step-3:** **Criando o CI com Jenkins**
 
 Com o nosso cluster provisionado, agora podemos focar na criação da Pipeline. Usaremos o Jenkins como ferramenta de CI para realizar a integração com o cluster e com a nossa aplicação.
 
@@ -98,7 +133,7 @@ pipeline {
     }
 
     stages {
-        stage('clean workspace') {
+        stage('Clean workspace') {
             steps {
                 cleanWs()
             }
@@ -107,6 +142,14 @@ pipeline {
         stage('Checkout from Git') {
             steps {
                 git branch: 'main', url: 'https://github.com/thdevopssre/infra-test-eks'
+            }
+        }
+
+        stage('Setup Ingress-Nginx Controller') {
+            steps {
+                script {
+                    sh 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/aws/deploy.yaml'
+                }
             }
         }
 
@@ -124,7 +167,7 @@ pipeline {
             }
         }
 
-        stage('Deploy APP helm chart on EKS') {
+        stage('Deploy APP Helm Chart on EKS') {
             steps {
                 script {
                     sh ('aws eks update-kubeconfig --name matrix-stg --region us-east-1')
