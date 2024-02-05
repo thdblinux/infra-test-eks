@@ -65,7 +65,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ```
 1.**Instalar o Ingress-Nginx Controller com Helm**
    
-É recomendado que no ambiente de produção o Ingress-Nginx Controller seja instalado com Helm.
+É recomendado que no ambiente de produção o Ingress-Nginx Controller seja instalado com Helm se estiver usando algum provedor de Nuvem.
 
 Utilize o seguinte comando Helm para instalar o Ingress-Nginx Controller no namespace ingress-nginx:
 
@@ -99,11 +99,25 @@ kubectl -n ingress-nginx get pod -o yaml
 ```
 Em geral, é necessário abrir a Porta 8443 entre todos os hosts nos quais os nós do Kubernetes estão em execução, usada para o controlador de admissão Ingress-Nginx.
 
-5. **Testar localmente:**
+5. **Testar localmente usando o Kind:**
+
+```sh
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+```
+
+```sh
+kubectl create namespace nginx  
+```
+
+```sh
+ helm install nginx ingress-nginx/ingress-nginx --namespace nginx
+```
 
 ```sh
 kubectl port-forward --namespace=ingress-nginx service/ingress-nginx-controller 8080:80
 ```
+
 Agora, você pode acessar a sua aplicação localmente usando` http://localhost:8080`.
 
 Lembre-se de substituir `NOME_DO_CLUSTER` e `SUA_REGIAO_AWS` pelos valores específicos do seu ambiente `AWS EKS.` Certifique-se de revisar a documentação para obter informações mais detalhadas e ajustar conforme necessário para atender aos requisitos específicos do seu ambiente.
