@@ -14,7 +14,9 @@ postgre:
     limit:
       cpu: "400m"
       memory: "512Mi"
-env:    
-  GOOGLE_RECAPTCHA_URL: "https://google.com/recaptcha/api"
-  ENABLE_RECAPTCHA: true
-  BUCKET_NFE: ""
+  env:
+    GOOGLE_RECAPTCHA_URL: "https://google.com/recaptcha/api"
+    ENABLE_RECAPTCHA: true
+    BUCKET_NFE: ""
+ingress:
+  enabled: true

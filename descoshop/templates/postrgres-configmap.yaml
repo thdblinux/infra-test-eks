@@ -3,16 +3,9 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-postgres-configmap
 data:
-  POSTGRES_USER: {{ .Values.credentials.userName }}
-  POSTGRES_PASSWORD: {{ .Values.credentials.usePwd }}
-  POSTGRES_DB: {{ .Values.credentials.dbName }}
-  MIN_REPLICAS: {{ .Values.replicas.min }}
-  MAX_REPLICAS: {{ .Values.replicas.max }}
-  REQUEST_CPU: {{ .Values.resources.request.cpu }}
-  REQUEST_MEMORY: {{ .Values.resources.request.memory }}
-  LIMIT_CPU: {{ .Values.resources.limit.cpu }}
-  LIMIT_MEMORY: {{ .Values.resources.limit.memory }}
-env:
-  GOOGLE_RECAPTCHA_URL: {{ .Values.env.GOOGLE_RECAPTCHA_URL | quote }}
-  ENABLE_RECAPTCHA: {{ .Values.env.ENABLE_RECAPTCHA }}
-  BUCKET_NFE: {{ .Values.env.BUCKET_NFE | quote }}
+  POSTGRES_DB: {{ .Values.postgre.credentials.dbName | quote }}
+  POSTGRES_USER: {{ .Values.postgre.credentials.userName | quote }}
+  POSTGRES_PASSWORD: {{ .Values.postgre.credentials.usePwd | quote }}
+  GOOGLE_RECAPTCHA_URL: {{ .Values.postgre.env.GOOGLE_RECAPTCHA_URL | quote }}
+  ENABLE_RECAPTCHA: {{ .Values.postgre.env.ENABLE_RECAPTCHA | quote }}
+  BUCKET_NFE: {{ .Values.postgre.env.BUCKET_NFE | quote }}
