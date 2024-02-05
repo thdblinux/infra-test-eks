@@ -118,7 +118,7 @@ metadata:
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: marciothadeu1984@gmail.com
+    email: 
     privateKeySecretRef:
       name: letsencrypt-staging
     solvers:
@@ -138,6 +138,7 @@ https://www.jenkins.io/doc/book/installing/kubernetes/
 
 **Instale ferramentas Docker e plug-ins Docker:**
 
+- Go
 - Docker
 - Docker Commons
 - Docker Pipeline
@@ -189,10 +190,11 @@ pipeline {
             }
         }
 
-        stage('Setup Ingress-Nginx Controller') {
+        stage('Setup Ingress-Nginx Controller and cert-manager') {
             steps {
                 script {
                     sh 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/aws/deploy.yaml'
+                    sh 'kubect apply -f cert-manager-stg.yaml'
                 }
             }
         }
