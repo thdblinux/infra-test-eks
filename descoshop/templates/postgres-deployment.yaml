@@ -31,9 +31,9 @@ spec:
           value: {{ .Values.postgre.credentials.userName }}
         - name: POSTGRES_PASSWORD
           value: {{ .Values.postgre.credentials.usePwd }}
-        # - name: GOOGLE_RECAPTCHA_URL
-        #   value: {{ .Values.postgre.env.GOOGLE_RECAPTCHA_URL }}
-        # - name: ENABLE_RECAPTCHA
-        #   value: {{ .Values.postgre.env.ENABLE_RECAPTCHA }}
-        # - name: BUCKET_NFE
-        #   value: {{ .Values.postgre.env.BUCKET_NFE }}
+        - name: GOOGLE_RECAPTCHA_URL
+          value: {{ .Values.postgre.env.GOOGLE_RECAPTCHA_URL }}
+        - name: ENABLE_RECAPTCHA
+          value: {{ .Values.postgre.env.ENABLE_RECAPTCHA }}
+        - name: BUCKET_NFE
+          value: {{ .Values.postgre.env.BUCKET_NFE }}
