@@ -4,6 +4,9 @@ postgre:
     usePwd: "tonystark@123"
     userName: "descoshop"
     dbName: "descoshop-stg"
+    GOOGLE_RECAPTCHA_URL: "https://google.com/recaptcha/api"
+    ENABLE_RECAPTCHA: true
+    BUCKET_NFE: ""
   replicas:
     min: 1
     max: 4
@@ -20,3 +23,6 @@ postgre:
     BUCKET_NFE: ""
 ingress:
   enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt"

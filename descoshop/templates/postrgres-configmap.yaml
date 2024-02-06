@@ -6,6 +6,3 @@ data:
   POSTGRES_DB: {{ .Values.postgre.credentials.dbName | quote }}
   POSTGRES_USER: {{ .Values.postgre.credentials.userName | quote }}
   POSTGRES_PASSWORD: {{ .Values.postgre.credentials.usePwd | quote }}
-  GOOGLE_RECAPTCHA_URL: {{ .Values.postgre.env.GOOGLE_RECAPTCHA_URL | quote }}
-  ENABLE_RECAPTCHA: {{ .Values.postgre.env.ENABLE_RECAPTCHA | quote }}
-  BUCKET_NFE: {{ .Values.postgre.env.BUCKET_NFE | quote }}
