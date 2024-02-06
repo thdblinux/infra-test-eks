@@ -40,7 +40,7 @@ pipeline {
             }
         }
 
-        stage('Deploy APP Helm Chart on EKS') {
+        stage('Deploy DB Helm Chart on EKS') {
             steps {
                 script {
                     sh ('aws eks update-kubeconfig --name matrix-stg --region us-east-1')

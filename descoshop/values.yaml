@@ -4,9 +4,10 @@ postgre:
     usePwd: "tonystark@123"
     userName: "descoshop"
     dbName: "descoshop-stg"
-    GOOGLE_RECAPTCHA_URL: "https://google.com/recaptcha/api"
-    ENABLE_RECAPTCHA: true
-    BUCKET_NFE: ""
+  service:
+    type: ClusterIP
+    port: 5432
+    targetPort: 5432
   replicas:
     min: 1
     max: 4
@@ -20,7 +21,7 @@ postgre:
   env:
     GOOGLE_RECAPTCHA_URL: "https://google.com/recaptcha/api"
     ENABLE_RECAPTCHA: true
-    BUCKET_NFE: ""
+    BUCKET_NFE: "URL do S3 criado na próxima etapa"
 ingress:
   enabled: true
   annotations:

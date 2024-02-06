@@ -16,7 +16,7 @@ spec:
       - name: postgre
         image: postgres:{{ .Values.postgre.tag }}
         ports:
-        - containerPort: 5432
+        - containerPort: {{ .Values.postgre.service.port }}
         resources:
           requests:
             memory: {{ .Values.postgre.resources.request.memory }}
@@ -31,3 +31,9 @@ spec:
           value: {{ .Values.postgre.credentials.userName }}
         - name: POSTGRES_PASSWORD
           value: {{ .Values.postgre.credentials.usePwd }}
+        - name: GOOGLE_RECAPTCHA_URL
+          value: {{ .Values.postgre.env.GOOGLE_RECAPTCHA_URL | default "" }}
+        - name: ENABLE_RECAPTCHA
+          value: {{ .Values.postgre.env.ENABLE_RECAPTCHA | default "false" | quote }}
+        - name: BUCKET_NFE
+          value: {{ .Values.postgre.env.BUCKET_NFE | default "" }}
