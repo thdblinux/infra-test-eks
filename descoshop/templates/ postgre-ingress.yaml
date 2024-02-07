@@ -1,23 +1,23 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: descoshop
+  name: {{ .Values.ingress.name }}
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    cert-manager.io/cluster-issuer: letsencrypt-stg
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.annotations.certManagerClusterIssuer }}
 spec:
-  ingressClassName:
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
   tls:
   - hosts:
-    - descoshop.com
-    secretName: descoshop-tls
+    - {{ .Values.ingress.tls.host }}
+      secretName: {{ .Values.ingress.tls.secretName }}
   rules:
   - http:
       paths:
-      - path: /descoshop
-        pathType: Prefix
+      - path: {{ .Values.ingress.rules.http.paths.path }}
+        pathType: {{ .Values.ingress.rules.http.paths.pathType }}
         backend:
           service: 
-            name: descoshop
+            name: {{ .Values.ingress.rules.http.paths.backend.service.name }}
             port:
-              number: 5000
+              number: {{ .Values.ingress.rules.http.paths.backend.service.port.number }}
