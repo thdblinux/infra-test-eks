@@ -5,7 +5,7 @@ postgre:
     userName: "descoshop"
     dbName: "descoshop-stg"
   service:
-    type: ClusterIP
+    type: LoadBalancer
     port: 5432
     targetPort: 5432
   replicas:
@@ -21,7 +21,7 @@ postgre:
   env:
     GOOGLE_RECAPTCHA_URL: "https://google.com/recaptcha/api"
     ENABLE_RECAPTCHA: true
-    BUCKET_NFE: "URL do S3 criado na próxima etapa"
+    BUCKET_NFE: "https://s3.console.aws.amazon.com/s3/home?region=us-east-1#"
 ingress:
   enabled: true
   annotations:

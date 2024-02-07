@@ -17,15 +17,6 @@ pipeline {
             }
         }
 
-        stage('Setup Ingress-Nginx Controller and cert-manager') {
-            steps {
-                script {
-                    sh 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/aws/deploy.yaml'
-                    sh 'kubect apply -f cert-manager-stg.yaml'
-                }
-            }
-        }
-
         stage("Docker Build & Push") {
             steps {
                 script {
