@@ -8,6 +8,9 @@ postgre:
     type: NodePort
     port: 5432
     targetPort: 5432
+    nodePort: 30000
+    selector: 
+      app: postgres 
   replicas:
     min: 1
     max: 4

@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: {{ .Values.postgre.ingress.className }}
   rules:
-  {{- range .Values.postgre.ingress.hosts }}
+  {{- range.Values.postgre.ingress.hosts }}
   tls:
   - hosts:
     - {{ . }}
