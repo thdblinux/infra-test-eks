@@ -170,6 +170,66 @@ kubectl get pods
 ```sh
 kubectl exec -it nome-do-pod -- env
 ```
+### Para testar a conexão com o banco de dados PostgreSQL, acessar o shell e criar uma tabela usando kubectl exec, você pode seguir os seguintes passos:
+
+1. Obter o nome do pod PostgreSQL
+
+```sh
+kubectl get pods
+```
+Anote o nome do pod que corresponde ao PostgreSQL, por exemplo, kube-news-postgre-6876f6bf75-9nxm9
+
+2.cessar o shell do PostgreSQL
+
+Use o comando kubectl exec para acessar o shell do PostgreSQL:
+
+```sh
+kubectl exec -it kube-news-postgre-6876f6bf75-9nxm9 -- psql -U descoshop -d descoshop-stg
+```
+
+### Para testar a conexão com o banco de dados PostgreSQL, acessar o shell e criar uma tabela usando kubectl exec, você pode seguir os seguintes passos:
+
+Passo 1: Obter o nome do pod PostgreSQL
+
+Use o seguinte comando para listar os pods em execução no seu cluster e encontre o nome do pod PostgreSQL:
+```sh
+kubectl get pods
+```
+Anote o nome do pod que corresponde ao PostgreSQL, por exemplo, kube-news-postgre-6876f6bf75-9nxm9.
+
+Passo 2: Acessar o shell do PostgreSQL
+
+Use o comando kubectl exec para acessar o shell do PostgreSQL:
+
+```sh
+kubectl exec -it kube-news-postgre-6876f6bf75-9nxm9 -- psql -U descoshop -d descoshop-stg
+```
+Isso abrirá o shell interativo do PostgreSQL para o banco de dados descoshop-stg usando o usuário descoshop.
+
+1. Criar a tabela
+Dentro do shell do PostgreSQL, execute os comandos SQL para criar a tabela:
+
+```sql
+CREATE TABLE config (
+    id SERIAL PRIMARY KEY,
+    key VARCHAR(50) NOT NULL,
+    value VARCHAR(255) NOT NULL
+);
+
+INSERT INTO config (key, value) VALUES
+    ('POSTGRES_DB', 'descoshop-stg'),
+    ('POSTGRES_USER', 'descoshop'),
+    ('POSTGRES_PASSWORD', 'tonystark@123'),
+    ('GOOGLE_RECAPTCHA_URL', 'https://google.com/recaptcha/api'),
+    ('ENABLE_RECAPTCHA', 'true'),
+    ('BUCKET_NFE', 'https://s3.console.aws.amazon.com/s3/home?region=us-east-1#');
+```
+Isso criará a tabela `config` e inserirá os dados fornecidos.
+
+4. Verificar a tabela
+```sh
+SELECT * FROM config;
+```
 
 **Step-4:Criando o CI com Jenkins**
 
@@ -370,6 +430,7 @@ Kubernetes, Docker, Terraform, Helm, GitHub, CI/CD,Argocd, e recursos AWS.
 - [ArgoCD Documentation](https://argo-cd.readthedocs.io/en/stable/)
 - [GitHub Repository](https://github.com/)
 - [Cert-Manager](https://cert-manager.io/)
+- [PostgreSQL Commands and Language](https://halleyoliv.gitlab.io/pgdocptbr/dml-insert.html)
 
 # Postmortem SLA, SLO, SLI e Erro Budget
 
