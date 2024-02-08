@@ -12,7 +12,7 @@ spec:
   {{- range .Values.postgre.ingress.hosts }}
   tls:
   - hosts:
-    - {{. }}
+    - {{ . }}
     secretName: {{. }}descoshop-tls
   - host: {{ . }}
     http:
