@@ -252,7 +252,7 @@ pipeline {
                     sh ('aws eks update-kubeconfig --name matrix-stg --region us-east-1')
                     sh "kubectl get ns"
                     dir('./infra-test-eks') {
-                        sh "helm install infra-test-eks ./descoshop"
+                        sh "helm install kube-news ./descoshop"
                     }
                 }
             }
