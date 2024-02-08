@@ -22,24 +22,28 @@ postgre:
     GOOGLE_RECAPTCHA_URL: "https://google.com/recaptcha/api"
     ENABLE_RECAPTCHA: true
     BUCKET_NFE: "https://s3.console.aws.amazon.com/s3/home?region=us-east-1#"
-    
+
 ingress:
   enabled: true
-  name: "descoshop"
-  ingressClassName: ""
-  annotations:
-    ingressClass: "nginx"
-    certManagerClusterIssuer: "letsencrypt"
-  tls:
-    host: "descoshop.com"
-    secretName: "descoshop-tls"
-  rules:
-    http:
-      paths:
-      - path: "/descoshop"
-        pathType: Prefix
-        backend:
-          service:
-            name: "descoshop"
-            port:
-              number: 5000
+  name: descoshop
+  spec:
+    ingressClassName: ""
+    annotations:
+      nginx.ingress.kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: "letsencrypt"
+    tls:
+      - hosts:
+          - descoshop.stg.descomplica.com.br
+        secretName: descoshop-tls
+    rules:
+      - http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: descoshop
+                  port:
+                    number: 80
+
+
