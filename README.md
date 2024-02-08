@@ -99,7 +99,7 @@ kubectl -n ingress-nginx get pod -o yaml
 ```
 Em geral, é necessário abrir a Porta 8443 entre todos os hosts nos quais os nós do Kubernetes estão em execução, usada para o controlador de admissão Ingress-Nginx.
 
-5. **Testar localmente usando o Kind:**
+5. **Testar os templates Helm localmente usando o Kind:**
 
 ```sh
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -140,10 +140,38 @@ spec:
         ingress:
           class: nginx
 ```
-OBS:: Nos ambientes de Produção, não declaramos "staging" dentro do endereço do servidor https. Os arquivos de configuração do cert-manager e o comando para instalar o Nginx Ingress Controller podem ser declarados na pipeline.O cert-manager pode ser usado junto aos aqruivos de configuração do Helm. 
+OBS:: Nos ambientes de Produção, não declaramos "staging" dentro do endereço do servidor https. Os arquivos de configuração do cert-manager e o comando para instalar o Nginx Ingress Controller podem ser declarados na pipeline.O cert-manager pode ser usado junto aos aqruivos de configuração do Helm.
 
+**Instalação PostgreSQL com Helm no cluster Kind**
 
-**Step-3:** **Criando o CI com Jenkins**
+- Navegue para o diretorio onde esta a pasta contendo os arquivos helm e execute os seguintes comandos:
+
+1.Instalar um release:
+```sh
+helm install kube-news ./descoshop
+```
+
+2.Listar as releases:
+```sh
+helm list
+```
+3.Verificar o Status do release:
+```sh
+ helm status kube-news 
+```
+
+4.Verificar o pod associado a release:
+
+```sh
+kubectl get pods
+```
+5.kubectl exec -it nome-do-pod -- env
+
+```sh
+kubectl exec -it nome-do-pod -- env
+```
+
+**Step-4:Criando o CI com Jenkins**
 
 Com o nosso cluster provisionado, agora podemos focar na criação da Pipeline. Usaremos o Jenkins como ferramenta de CI para realizar a integração com o cluster e com a nossa aplicação.
 
@@ -281,7 +309,7 @@ Depois de instalar o ArgoCD, você precisa configurar seu repositório GitHub co
 PS: Se tudo ocorrer perfeitamente bem no ambiente de `stage,` agora podemos repetir o mesmo processo para construir o ambiente de `produção`.
 
 
-**Step-4:** **Removendo o ambiente de stage**
+**Step-4:** **Removendo o ambiente de stage ou proução**
  No diretorio do arquivos de configuração do Terraform aplique o comando:
 
  ```sh
@@ -311,7 +339,7 @@ As informações de conexão ao banco de dados devem ser protegidas usando recur
 
 **Entregáveis:**
 
--  Arquivos Terraform para configurar o bucket S3.
+-  Arquivos Terraform para configurar o EKS,VPC, bucket S3.
 - Configurações da pipeline CI/CD Jenkins.
 - Arquivos de configuração da aplicação no Kubernetes (Helm templates, values, etc.).
 - Documentação detalhada dos passos executados.
