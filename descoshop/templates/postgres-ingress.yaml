@@ -13,7 +13,7 @@ spec:
   tls:
   - hosts:
     - {{ . }}
-    secretName: {{. }}descoshop-tls
+    secretName: {{ . }}descoshop-tls
   - host: {{ . }}
     http:
       paths:
