@@ -7,4 +7,3 @@ FROM alpine:3.18 as prod
 WORKDIR /app
 COPY --from=builder /build/webtest .
 CMD [ "./webtest" ]
-
