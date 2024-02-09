@@ -101,6 +101,31 @@ Em geral, é necessário abrir a Porta 8443 entre todos os hosts nos quais os n�
 
 5. **Testar os templates Helm localmente usando o Kind:**
 
+Crie um aqruivo com om nome `kind-config.yaml`:
+```yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  - containerPort: 443
+```
+Use o comando kubectl para criar o cluster com 1 node:
+```sh
+kind create cluster --name kind-multinodes --config kind-config.yaml  
+```
+
+Agora instale o ingress-nginix-controller:
+
 ```sh
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
