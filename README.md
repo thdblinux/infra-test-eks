@@ -431,6 +431,9 @@ Kubernetes, Docker, Terraform, Helm, GitHub, CI/CD,Argocd, e recursos AWS.
 - [GitHub Repository](https://github.com/)
 - [Cert-Manager](https://cert-manager.io/)
 - [PostgreSQL Commands and Language](https://halleyoliv.gitlab.io/pgdocptbr/dml-insert.html)
+- [Terragen s3-lifecycle](https://registry.terraform.io/providers/hashicorp/aws/4.2.0/docs/resources/s3_bucket_lifecycle_configuration/)
+- [Amazon S3 Lifecycle configuration rule](https://repost.aws/knowledge-center/s3-multipart-cleanup-lifecycle-rule)
+- [Amazon S3 modules](https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest)
 
 # Postmortem SLA, SLO, SLI e Erro Budget
 

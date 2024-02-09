@@ -2,14 +2,15 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "5.36.0"
     }
   }
 }
 
 provider "aws" {
-  region = var.region
+  region = var.region # Substitua pela sua região desejada
 }
+
 
 module "matrix_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
