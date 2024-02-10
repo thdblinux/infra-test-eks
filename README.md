@@ -45,7 +45,9 @@ terraform apply -auto-approve
 
 Use um comando da `AWS` para interagir com o cluster via `CLI` usando o `kubectl` e também criar e atualizar o arquivo` kubeconfig`:
 
-- Usaremos um comando da AWS para fazer interação com o cluster via `CLI `usando o `kubectl` e tammbé irar cria e atualizar o arquivo `kubeconfig:`
+-"Utilizaremos um comando da` AWS` para interagir com o cluster por meio da `CLI`, utilizando o` kubectl`, e também para criar e atualizar o arquivo` kubeconfig`."
+- 
+Lembre-se de substituir `NOME_DO_CLUSTER` e `SUA_REGIAO_AWS` pelos valores específicos do seu ambiente `AWS EKS.` Certifique-se de revisar a documentação para obter informações mais detalhadas e ajustar conforme necessário para atender aos requisitos específicos do seu ambiente.
   
 ```sh
 aws eks update-kubeconfig --region region-code --name my-cluster
@@ -88,7 +90,7 @@ kubectl wait --namespace ingress-nginx \
 ```
 Isso garante que o controlador esteja pronto e em execução antes de prosseguir.
 
-3. **Configurar o Firewall:**
+1. **Configurar o Firewall:**
 
 Certifique-se de configurar o firewall para permitir o tráfego nas portas necessárias. O controlador Ingress-Nginx geralmente requer as portas 80 e 443 abertas.
 
@@ -99,7 +101,7 @@ kubectl -n ingress-nginx get pod -o yaml
 ```
 Em geral, é necessário abrir a Porta 8443 entre todos os hosts nos quais os nós do Kubernetes estão em execução, usada para o controlador de admissão Ingress-Nginx.
 
-5. **Testar os templates Helm localmente usando o Kind:**
+1. **Testar os templates Helm localmente usando o Kind:**
 
 Crie um aqruivo com om nome `kind-config.yaml`:
 ```yaml
@@ -145,10 +147,9 @@ kubectl port-forward --namespace=ingress-nginx service/ingress-nginx-controller 
 
 Agora, você pode acessar a sua aplicação localmente usando` http://localhost:8080`.
 
-Lembre-se de substituir `NOME_DO_CLUSTER` e `SUA_REGIAO_AWS` pelos valores específicos do seu ambiente `AWS EKS.` Certifique-se de revisar a documentação para obter informações mais detalhadas e ajustar conforme necessário para atender aos requisitos específicos do seu ambiente.
 
-### Agora, vamos criar um certificado para nossa aplicação usando o arquivo de configuração fornecido pelo Cert-Manager.
-  
+### Agora, vamos criar um certificado para nossa aplicação usando o arquivo de configuração fornecido pelo Cert-Manager crie um arquivo com o nome cert-manager.ymal e siga os comandos abixo:
+
 ```yaml
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -165,6 +166,25 @@ spec:
         ingress:
           class: nginx
 ```
+1. Certifique-se de que os CRDs necessários estão instalados. Você pode fazer isso aplicando os arquivos CRD fornecidos pelo Cert Manager. Por exemplo:
+
+```sh
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.6.0/cert-manager.crds.yaml
+```
+- Certifique-se de que o arquivo cert-manager-stg.yaml refere-se a um 
+- ClusterIssuer válido na versão correta. Verifique se a definição do 
+- ClusterIssuer está correta no arquivo cert-manager-stg.yaml.
+
+2. Execute o comando para aplicar as configurações ao seu cluster Kubernetes:
+```sh
+kubectl apply -f cert-manager-stg.yaml
+```
+
+3. Verifique se o certificado foi criado:
+````sh
+ubectl get clusterissuers letsencrypt-staging
+```
+
 OBS:: Nos ambientes de Produção, não declaramos "staging" dentro do endereço do servidor https. Os arquivos de configuração do cert-manager e o comando para instalar o Nginx Ingress Controller podem ser declarados na pipeline.O cert-manager pode ser usado junto aos aqruivos de configuração do Helm.
 
 **Instalação PostgreSQL com Helm no cluster Kind**
@@ -195,6 +215,7 @@ kubectl get pods
 ```sh
 kubectl exec -it nome-do-pod -- env
 ```
+
 ### Para testar a conexão com o banco de dados PostgreSQL, acessar o shell e criar uma tabela usando kubectl exec, você pode seguir os seguintes passos:
 
 1. Obter o nome do pod PostgreSQL
@@ -212,7 +233,6 @@ Use o comando kubectl exec para acessar o shell do PostgreSQL:
 kubectl exec -it kube-news-postgre-6876f6bf75-9nxm9 -- psql -U descoshop -d descoshop-stg
 ```
 
-### Para testar a conexão com o banco de dados PostgreSQL, acessar o shell e criar uma tabela usando kubectl exec, você pode seguir os seguintes passos:
 
 Passo 1: Obter o nome do pod PostgreSQL
 
@@ -263,7 +283,7 @@ Com o nosso cluster provisionado, agora podemos focar na criação da Pipeline. 
 Instale o Jenkins em um namespace do cluster EKS seguindo este tutorial na Documentação do Jenkins: 
 https://www.jenkins.io/doc/book/installing/kubernetes/
 
-**Instale ferramentas Docker e plug-ins Docker:**
+**Instale ferramentas Kubernetes, Go, Docker e plug-ins Docker:**
 
 - Go
 - Docker
@@ -459,6 +479,7 @@ Kubernetes, Docker, Terraform, Helm, GitHub, CI/CD,Argocd, e recursos AWS.
 - [Terragen s3-lifecycle](https://registry.terraform.io/providers/hashicorp/aws/4.2.0/docs/resources/s3_bucket_lifecycle_configuration/)
 - [Amazon S3 Lifecycle configuration rule](https://repost.aws/knowledge-center/s3-multipart-cleanup-lifecycle-rule)
 - [Amazon S3 modules](https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest)
+- [AWS update kubeconfig](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)
 
 # Postmortem SLA, SLO, SLI e Erro Budget
 
