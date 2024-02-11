@@ -60,7 +60,7 @@ module "matrix_eks" {
   }
 
   tags = {
-    Name        = "matrix-prod-${terraform.workspace}"
+    Name        = "matrix-prod"
     Environment = "prod"
   }
 }

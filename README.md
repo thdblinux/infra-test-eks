@@ -282,6 +282,7 @@ Isso criará a tabela `config` e inserirá os dados fornecidos.
 SELECT * FROM config;
 ```
 
+<<<<<<< HEAD
 **Step-4:Criando o CI com O Github Actions**
 
 Com o nosso cluster provisionado, agora podemos focar na criação da Pipeline. Usaremos o Github Actions como ferramenta de CI para realizar a integração com o cluster e com a nossa aplicação.
@@ -335,9 +336,65 @@ jobs:
 - Settings => actions => Secrets and variables => Actions => New repository secret
   
 
+=======
+**Step-4:Criando o CI com Github Actions**
+
+Com o nosso cluster provisionado, agora podemos focar na criação da Pipeline. Usaremos o Github Actions como ferramenta de CI para realizar a integração com o cluster e com a nossa aplicação.
+
+
+Configure as credenciais do Docker e do EKS para permitir que o Github Actions interaja com a pipeline.
+ 
+ ```yaml
+name: Build and push Docker image to Docker registry
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v2.0
+        with:
+          version: 'v1.29.0'
+        id: install
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Docker build and push
+        run: |
+          docker build -t node-app .
+          docker tag node-app thsre/node-app:latest
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          docker push thsre/node-app:latest
+        env:
+          DOCKER_CLI_ACI: 1
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name matrix-prod --region us-east-1
+
+      - name: Deploy nodejs Helm chart to EKS
+        run: |
+          helm install kube-news ./descoshop
+          helm install nodeapp ./node-app 
+ ```
+
+
+>>>>>>> 00212a0 (feat:  modified:   README.md)
 **Step-3:** **Deploy da Aplicação com ArgoCD**
 
-1.Instale o ArgoCD:
+Instale o ArgoCD:
 
 Todos esses componentes podem ser instalados usando um manifesto fornecido pelo Projeto Argo:
 
@@ -350,8 +407,11 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2
 ```sh
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 ```
+<<<<<<< HEAD
 
 3.Login
+=======
+>>>>>>> 00212a0 (feat:  modified:   README.md)
 
 ```sh
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
@@ -419,7 +479,7 @@ As informações de conexão ao banco de dados devem ser protegidas usando recur
 
 **Tecnologias Utilizadas:**
 
-Kubernetes, Docker, Terraform, Helm, GitHub, CI/CD,Argocd, e recursos AWS.
+Kubernetes, Docker, Terraform, Helm, Git && GitHub Actions CI, CD Argocd, e recursos AWS.
 
 ## Links úteis para a documentação das tecnologias utilizadas no projeto:
 
@@ -448,9 +508,12 @@ Kubernetes, Docker, Terraform, Helm, GitHub, CI/CD,Argocd, e recursos AWS.
 - [Amazon S3 modules](https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest)
 - [AWS update kubeconfig](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)
 
+<<<<<<< HEAD
 ## Para saber mais sobre Kubernetes, containers e instalações de componentes em outros sistemas operacionais, consulte o Livro Gratuito Descomplicando o Kubernetes.
 
 [Descomplicando o Kubernetes - Livro Gratuito](https://livro.descomplicandokubernetes.com.br/?utm_medium=social&utm_source=linktree&utm_campaign=livro+descomplicando+o+kubernetes+gratuito)
+=======
+>>>>>>> 00212a0 (feat:  modified:   README.md)
 
 
 # Postmortem SLA, SLO, SLI e Erro Budget

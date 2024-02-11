@@ -58,7 +58,7 @@ module "secondary_s3_bucket" {
 }
 EOF
   tags = {
-    Name        = "matrix-prod-${terraform.workspace}"
+    Name        = "matrix-prod"
     Environment = "prod"
   }
 }
