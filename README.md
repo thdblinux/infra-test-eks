@@ -336,7 +336,6 @@ jobs:
 - Settings => actions => Secrets and variables => Actions => New repository secret
   
 
-=======
 **Step-4:Criando o CI com Github Actions**
 
 Com o nosso cluster provisionado, agora podemos focar na criação da Pipeline. Usaremos o Github Actions como ferramenta de CI para realizar a integração com o cluster e com a nossa aplicação.
@@ -390,8 +389,6 @@ jobs:
           helm install nodeapp ./node-app 
  ```
 
-
->>>>>>> 00212a0 (feat:  modified:   README.md)
 **Step-3:** **Deploy da Aplicação com ArgoCD**
 
 Instale o ArgoCD:
@@ -407,11 +404,8 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2
 ```sh
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 ```
-<<<<<<< HEAD
 
 3.Login
-=======
->>>>>>> 00212a0 (feat:  modified:   README.md)
 
 ```sh
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
@@ -508,12 +502,10 @@ Kubernetes, Docker, Terraform, Helm, Git && GitHub Actions CI, CD Argocd, e recu
 - [Amazon S3 modules](https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest)
 - [AWS update kubeconfig](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)
 
-<<<<<<< HEAD
+
 ## Para saber mais sobre Kubernetes, containers e instalações de componentes em outros sistemas operacionais, consulte o Livro Gratuito Descomplicando o Kubernetes.
 
 [Descomplicando o Kubernetes - Livro Gratuito](https://livro.descomplicandokubernetes.com.br/?utm_medium=social&utm_source=linktree&utm_campaign=livro+descomplicando+o+kubernetes+gratuito)
-=======
->>>>>>> 00212a0 (feat:  modified:   README.md)
 
 
 # Postmortem SLA, SLO, SLI e Erro Budget
