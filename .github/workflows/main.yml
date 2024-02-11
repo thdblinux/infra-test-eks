@@ -39,4 +39,5 @@ jobs:
 
       - name: Deploy nodejs Helm chart to EKS
         run: |
+          helm install kube-news ./descoshop
           helm install nodeapp ./node-app
