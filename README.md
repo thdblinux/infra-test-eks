@@ -14,7 +14,7 @@
 **Step-1:** **Criando ambiente de stage**
 
 - Clone o repositório para versionar o código do projeto:
-- 
+  
 ```sh
 git clone https://github.com/thdevopssre/infra-test-eks.git
 ```
@@ -29,15 +29,19 @@ cd /terraform/stg
 ```sh
 terraform init
 ```
+
 ```sh
 terraform fmt
 ```
+
 ```sh
 terraform validate
 ```
+
 ```sh
 terraform plan
 ```
+
 ```sh
 terraform apply -auto-approve
 ```
@@ -122,6 +126,7 @@ nodes:
   - containerPort: 443
 ```
 Use o comando kubectl para criar o cluster com 1 node:
+
 ```sh
 kind create cluster --name kind-multinodes --config kind-config.yaml  
 ```
@@ -181,8 +186,8 @@ kubectl apply -f cert-manager-stg.yaml
 ```
 
 3. Verifique se o certificado foi criado:
-````sh
-ubectl get clusterissuers letsencrypt-staging
+```sh
+kubectl get clusterissuers letsencrypt-staging
 ```
 
 OBS:: Nos ambientes de Produção, não declaramos "staging" dentro do endereço do servidor https. Os arquivos de configuração do cert-manager e o comando para instalar o Nginx Ingress Controller podem ser declarados na pipeline.O cert-manager pode ser usado junto aos aqruivos de configuração do Helm.
@@ -254,7 +259,7 @@ Isso abrirá o shell interativo do PostgreSQL para o banco de dados descoshop-st
 1. Criar a tabela
 Dentro do shell do PostgreSQL, execute os comandos SQL para criar a tabela:
 
-```sql
+```sh
 CREATE TABLE config (
     id SERIAL PRIMARY KEY,
     key VARCHAR(50) NOT NULL,
@@ -269,102 +274,67 @@ INSERT INTO config (key, value) VALUES
     ('ENABLE_RECAPTCHA', 'true'),
     ('BUCKET_NFE', 'https://s3.console.aws.amazon.com/s3/home?region=us-east-1#');
 ```
+
 Isso criará a tabela `config` e inserirá os dados fornecidos.
 
-4. Verificar a tabela
+1. Verificar a tabela
 ```sh
 SELECT * FROM config;
 ```
 
-**Step-4:Criando o CI com Jenkins**
+**Step-4:Criando o CI com O Github Actions**
 
-Com o nosso cluster provisionado, agora podemos focar na criação da Pipeline. Usaremos o Jenkins como ferramenta de CI para realizar a integração com o cluster e com a nossa aplicação.
-
-Instale o Jenkins em um namespace do cluster EKS seguindo este tutorial na Documentação do Jenkins: 
-https://www.jenkins.io/doc/book/installing/kubernetes/
-
-**Instale ferramentas Kubernetes, Go, Docker e plug-ins Docker:**
-
-- Go
-- Docker
-- Docker Commons
-- Docker Pipeline
-- Docker API
-- docker-build-step
-- kubernetes
-- kubernetes cli
-
-Configure as credenciais do Docker e do kubeconfig para permitir que o Jenkins interaja com a pipeline.
-
-1. **Credenciais do Docker:**
-- Certifique-se de ter o Docker instalado em seu ambiente Jenkins.
-- Acesse o Jenkins e vá para o painel de administração.
-- No painel de administração, clique em "Credenciais" e, em seguida, "Sistema".
--  Adicione uma nova credencial, escolhendo o tipo apropriado para as credenciais do Docker (por exemplo, "Nome de usuário e senha" ou "Token de acesso").
--  Forneça as informações necessárias, como nome de usuário, senha ou token, e salve as credenciais.
-  
-2.**kubeconfig:**
-- Garanta que o kubectl (cliente Kubernetes) esteja instalado no ambiente Jenkins.
-- No Jenkins, vá para o painel de administração e clique em "Credenciais" e, em seguida, "Sistema".
-- Adicione uma nova credencial, escolhendo o tipo "Arquivo de texto secreto".
-- Copie o conteúdo do seu arquivo kubeconfig para o campo de texto ou faça upload do arquivo diretamente.
-- Salve as credenciais.
-
-3.Configuração na Pipeline:
-
-- Abra ou crie o arquivo Jenkinsfile da sua pipeline.
-- Adicione etapas para configurar as credenciais recém-criadas.
-- Certifique-se de substituir 'seu-id-de-credencial-docker' e 'seu-id-de-credencial-kubeconfig' pelos IDs reais das credenciais criadas anteriormente.
-- 
+Com o nosso cluster provisionado, agora podemos focar na criação da Pipeline. Usaremos o Github Actions como ferramenta de CI para realizar a integração com o cluster e com a nossa aplicação.
 
 ```yaml
-pipeline {
-    agent any
-    tools {
-        go '1.19'
-    }
+name: Build and push Docker image to Docker registry
 
-    stages {
-        stage('Clean workspace') {
-            steps {
-                cleanWs()
-            }
-        }
+on:
+  push:
+    branches:
+      - main
 
-        stage('Checkout from Git') {
-            steps {
-                git branch: 'main', url: 'https://github.com/thdevopssre/infra-test-eks'
-            }
-        }
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-        stage("Docker Build & Push") {
-            steps {
-                script {
-                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
-                        dockerapp = docker.build("thsre/descoshop:${env.BUILD_ID}", '-f ./frontend/Dockerfile .')
-                        docker.withRegistry('https://registry.hub.docker.com', 'docker') {
-                            dockerapp.push('latest')
-                            dockerapp.push("${env.BUILD_ID}")
-                        }
-                    }
-                }
-            }
-        }
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v2.0
+        with:
+          version: 'v1.29.0'
+        id: install
 
-        stage('Deploy APP Helm Chart on EKS') {
-            steps {
-                script {
-                    sh ('aws eks update-kubeconfig --name matrix-stg --region us-east-1')
-                    sh "kubectl get ns"
-                    dir('./infra-test-eks') {
-                        sh "helm install kube-news ./descoshop"
-                    }
-                }
-            }
-        }
-    }
-}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Docker build and push
+        run: |
+          docker build -t node-app .
+          docker tag node-app thsre/node-app:latest
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          docker push thsre/node-app:latest
+        env:
+          DOCKER_CLI_ACI: 1
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name matrix-prod --region us-east-1
+
+      - name: Deploy nodejs Helm chart to EKS
+        run: |
+          helm install kube-news ./descoshop
+          helm install nodeapp ./node-app
 ```
+- configure as secrets e variables do cloud provider e do registry da imagem Docker no Actions do Github.
+- Settings => actions => Secrets and variables => Actions => New repository secret
+  
+
 **Step-3:** **Deploy da Aplicação com ArgoCD**
 
 1.Instale o ArgoCD:
@@ -380,9 +350,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2
 ```sh
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 ```
-```sh
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
-```
+
 3.Login
 
 ```sh
@@ -455,7 +423,6 @@ Kubernetes, Docker, Terraform, Helm, GitHub, CI/CD,Argocd, e recursos AWS.
 
 ## Links úteis para a documentação das tecnologias utilizadas no projeto:
 
-- [Jenkins Pipeline Syntax](https://www.jenkins.io/doc/book/pipeline/syntax/)
 - [Docker Builder Reference](https://docs.docker.com/engine/reference/builder/)
 - [Docker Postgres Sample](https://docs.docker.com/samples/postgres/)
 - [Docker Postgres Image](https://hub.docker.com/_/postgres)
@@ -471,15 +438,20 @@ Kubernetes, Docker, Terraform, Helm, GitHub, CI/CD,Argocd, e recursos AWS.
 - [Go Development Use Cases](https://go.dev/solutions/use-cases)
 - [Kubernetes Nginx Ingress Configuration](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/)
 - [Artifact Hub](https://artifacthub.io/)
-- [EKS Workshop](https://archive.eksworkshop.com/intermediate/290_argocd/install/)
+- [EKS Workshop Install Argocd](https://archive.eksworkshop.com/intermediate/290_argocd/install/)
 - [ArgoCD Documentation](https://argo-cd.readthedocs.io/en/stable/)
-- [GitHub Repository](https://github.com/)
+- [Workflow syntax for GitHub Actions](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions)
 - [Cert-Manager](https://cert-manager.io/)
 - [PostgreSQL Commands and Language](https://halleyoliv.gitlab.io/pgdocptbr/dml-insert.html)
 - [Terragen s3-lifecycle](https://registry.terraform.io/providers/hashicorp/aws/4.2.0/docs/resources/s3_bucket_lifecycle_configuration/)
 - [Amazon S3 Lifecycle configuration rule](https://repost.aws/knowledge-center/s3-multipart-cleanup-lifecycle-rule)
 - [Amazon S3 modules](https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest)
 - [AWS update kubeconfig](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)
+
+## Para saber mais sobre Kubernetes, containers e instalações de componentes em outros sistemas operacionais, consulte o Livro Gratuito Descomplicando o Kubernetes.
+
+[Descomplicando o Kubernetes - Livro Gratuito](https://livro.descomplicandokubernetes.com.br/?utm_medium=social&utm_source=linktree&utm_campaign=livro+descomplicando+o+kubernetes+gratuito)
+
 
 # Postmortem SLA, SLO, SLI e Erro Budget
 
