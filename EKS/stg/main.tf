@@ -2,15 +2,14 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.36.0"
+      version = "~> 5.0"
     }
   }
 }
 
 provider "aws" {
-  region = var.region # Substitua pela sua região desejada
+  region = var.region
 }
-
 
 module "matrix_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
@@ -28,23 +27,25 @@ module "matrix_vpc" {
 
   tags = {
     "kubernetes.io/cluster/matrix-eks" = "shared"
-    "Environment"                      = "stg"
   }
 
   public_subnet_tags = {
-    "kubernetes.io/role/elb" = 1
+    "kubernetes.io/cluster/matrix-eks" = "shared"
+    "kubernetes.io/role/elb"           = 1
   }
   private_subnet_tags = {
-    "kubernetes.io/role/internal-elb" = 1
+    "kubernetes.io/cluster/matrix-eks" = "shared"
+    "kubernetes.io/role/internal-elb"  = 1
   }
+
 }
 
 module "matrix_eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19.0"
 
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
+  cluster_name    = "matrix-stg"
+  cluster_version = "1.28"
 
   subnet_ids                     = module.matrix_vpc.private_subnets
   vpc_id                         = module.matrix_vpc.vpc_id
@@ -52,15 +53,16 @@ module "matrix_eks" {
 
   eks_managed_node_groups = {
     node-app = {
-      min_size       = 1
-      max_size       = 2
-      desired_size   = 1
+      min_size     = 1
+      max_size     = 2
+      desired_size = 1
+
       instance_types = ["t3.medium"]
     }
   }
-
-  tags = {
-    Name        = "matrix-stg-${terraform.workspace}"
+  
+   tags = {
+    Name        = "matrix-stg"
     Environment = "stg"
   }
 }

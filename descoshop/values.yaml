@@ -5,10 +5,9 @@ postgre:
     userName: "descoshop"
     dbName: "descoshop-stg"
   service:
-    type: NodePort
+    type: LoadBalancer
     port: 5432
     targetPort: 5432
-    nodePort: 30000
     selector: 
       app: postgres 
   replicas:
@@ -41,7 +40,7 @@ ingress:
     rules:
       - http:
           paths:
-            - path: /
+            - path: /descoshop
               pathType: Prefix
               backend:
                 service:

@@ -1,4 +1,4 @@
-{{ if .Values.postgre.enabled }}
+{{ if .Values.nodeapp.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -7,22 +7,22 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
     cert-manager.io/cluster-issuer: {{ .Values.ingress.annotations.certManagerClusterIssuer }}
 spec:
-  ingressClassName: {{ .Values.postgre.ingress.className }}
+  ingressClassName: {{ .Values.nodeapp.ingress.className }}
   rules:
-  {{- range.Values.postgre.ingress.hosts }}
+  {{- range.Values.nodeapp.ingress.hosts }}
   tls:
   - hosts:
     - {{ . }}
-    secretName: {{ . }}descoshop-tls
+    secretName: {{ . }}nodeapp-tls
   - host: {{ . }}
     http:
       paths:
-      - path: /descoshop
+      - path: /nodeapp
         pathType: Prefix
         backend:
           service:
-            name: {{ $.Release.Name }}-descoshop
+            name: {{ $.Release.Name }}-nodeapp
             port:
-              number: {{ .Values.postgre.service.port }}
+              number: {{ .Values.nodeapp.service.port }}
   {{- end }}
 {{ end }}

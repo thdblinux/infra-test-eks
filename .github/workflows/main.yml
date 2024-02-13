@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [node-app]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -33,11 +33,14 @@ jobs:
           docker push thsre/node-app:latest
         env:
           DOCKER_CLI_ACI: 1
+          
+      - name: Trivy image scan
+        run: trivy image thsre/node-app:latest
 
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --name matrix-prod --region us-east-1
 
       - name: Deploy nodejs Helm chart to EKS
         run: |
-          helm install kube-news ./descoshop
-          helm install nodeapp ./node-app
+          helm install postgres ./descoshop
+          helm install node ./nodeapp 

@@ -1,6 +1,6 @@
 provider "aws" {
   alias  = "s3_bucket_provider"
-  region = var.region
+  region = "us-east-1"
 }
 
 module "secondary_s3_bucket" {
@@ -57,8 +57,4 @@ module "secondary_s3_bucket" {
   ]
 }
 EOF
-  tags = {
-    Name        = "matrix-prod"
-    Environment = "prod"
-  }
 }
