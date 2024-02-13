@@ -1,16 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
-provider "aws" {
-  region = var.region
-}
-
 module "matrix_vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.1.1"
@@ -60,8 +47,8 @@ module "matrix_eks" {
       instance_types = ["t3.medium"]
     }
   }
-  
-   tags = {
+
+  tags = {
     Name        = "matrix-stg"
     Environment = "stg"
   }
