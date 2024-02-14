@@ -35,7 +35,7 @@ jobs:
           DOCKER_CLI_ACI: 1
 
       - name: Update kubeconfig
-        run: aws eks update-kubeconfig --name matrix-prod --region us-east-1
+        run: aws eks update-kubeconfig --name MATRIX-STG --region us-east-1
 
       - name: Deploy nodejs Helm chart to EKS
         run: |

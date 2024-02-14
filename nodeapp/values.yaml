@@ -16,10 +16,6 @@ nodeapp:
     limit:
       cpu: "400m"
       memory: "512Mi"
-    images:
-    - name: nodeapp
-      repository: node-app
-      tag: latest
 
 ingress:
   enabled: true
