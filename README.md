@@ -265,7 +265,7 @@ CREATE TABLE config (
 );
 
 INSERT INTO config (key, value) VALUES
-    ('POSTGRES_DB', 'descoshop-stg'),
+    ('POSTGRES_DB', 'descoshop-prod'),
     ('POSTGRES_USER', 'descoshop'),
     ('POSTGRES_PASSWORD', 'tonystark@123'),
     ('GOOGLE_RECAPTCHA_URL', 'https://google.com/recaptcha/api'),
