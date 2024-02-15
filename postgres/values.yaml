@@ -27,7 +27,7 @@ postgre:
 
 ingress:
   enabled: true
-  name: descoshop
+  name: postgres
   spec:
     ingressClassName: ""
     annotations:
@@ -35,15 +35,15 @@ ingress:
       cert-manager.io/cluster-issuer: "letsencrypt"
     tls:
       - hosts:
-          - descoshop.stg.descomplica.com.br
+          - descoshop-stg.rds.aws.amazon.com
         secretName: descoshop-tls
     rules:
       - http:
           paths:
-            - path: /descoshop
+            - path: /postgres
               pathType: Prefix
               backend:
                 service:
-                  name: descoshop
+                  name: postgres
                   port:
                     number: 80

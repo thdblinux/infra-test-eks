@@ -1,55 +1,107 @@
-module "matrix_vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.1.1"
+resource "aws_iam_role" "eks_cluster" {
+  name = "eks-cluster-role-k8s"
 
-  name            = "matrix-vpc"
-  cidr            = var.vpc_cidr
-  private_subnets = var.private_subnet_cidr_blocks
-  public_subnets  = var.public_subnet_cidr_blocks
-  azs             = var.azs
-
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
-  enable_dns_hostnames = true
-
-  tags = {
-    "kubernetes.io/cluster/matrix-eks" = "shared"
-  }
-
-  public_subnet_tags = {
-    "kubernetes.io/cluster/matrix-eks" = "shared"
-    "kubernetes.io/role/elb"           = 1
-  }
-  private_subnet_tags = {
-    "kubernetes.io/cluster/matrix-eks" = "shared"
-    "kubernetes.io/role/internal-elb"  = 1
-  }
-
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "eks.amazonaws.com"
+        }
+      }
+    ]
+  })
 }
 
-module "matrix_eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 19.0"
+resource "aws_iam_policy_attachment" "eks_cluster_policy" {
+  name       = "eks-cluster-policy"
+  roles      = [aws_iam_role.eks_cluster.name]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
 
-  cluster_name    = "matrix-stg"
-  cluster_version = "1.28"
+resource "aws_iam_policy_attachment" "eks_cluster_policy_cni_policy" {
+  name       = "eks-cluster-policy_cni_policy"
+  roles      = [aws_iam_role.eks_cluster.name]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
 
-  subnet_ids                     = module.matrix_vpc.private_subnets
-  vpc_id                         = module.matrix_vpc.vpc_id
-  cluster_endpoint_public_access = true
+# Get default VPC id
+data "aws_vpc" "default" {
+  default = true
+}
 
-  eks_managed_node_groups = {
-    node-app = {
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
-
-      instance_types = ["t3.medium"]
-    }
+# Get public subnets in VPC
+data "aws_subnets" "public" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
   }
+}
 
+resource "aws_eks_cluster" "eks" {
+  name     = "MATRIX-STG"
+  role_arn = aws_iam_role.eks_cluster.arn
+
+  vpc_config {
+    subnet_ids = data.aws_subnets.public.ids
+  }
+}
+
+resource "aws_iam_role" "matrix" {
+  name = "eks-node-group-k8s"
+
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "ec2.amazonaws.com"
+      }
+    }]
+    Version = "2012-10-17"
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "matrix-AmazonEKSWorkerNodePolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  role       = aws_iam_role.matrix.name
+}
+
+resource "aws_iam_role_policy_attachment" "matrix-AmazonEKS_CNI_Policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.matrix.name
+}
+
+resource "aws_iam_role_policy_attachment" "matrix-AmazonEC2ContainerRegistryReadOnly" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  role       = aws_iam_role.matrix.name
+}
+
+
+# Create managed node group
+resource "aws_eks_node_group" "matrix" {
+  cluster_name    = aws_eks_cluster.eks.name
+  node_group_name = "NODE-STG"
+  node_role_arn   = aws_iam_role.matrix.arn
+
+  subnet_ids = data.aws_subnets.public.ids
+  scaling_config {
+    desired_size = 1
+    max_size     = 2
+    min_size     = 1
+  }
+  instance_types = ["t3.medium"]
+
+  depends_on = [
+    aws_iam_role_policy_attachment.matrix-AmazonEKSWorkerNodePolicy,
+    aws_iam_role_policy_attachment.matrix-AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.matrix-AmazonEC2ContainerRegistryReadOnly,
+    aws_eks_cluster.eks
+  ]
   tags = {
-    Name        = "matrix-stg"
-    Environment = "stg"
+    Name = "MATRIX-STG"
+    Environment = "STAGING"
   }
 }

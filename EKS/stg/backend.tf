@@ -10,7 +10,7 @@ module "secondary_s3_bucket" {
     aws = aws.s3_bucket_provider
   }
 
-  bucket = "matrix-reload-secondary"
+  bucket = "matrix-reload"
   acl    = "private"
 
   control_object_ownership = true
@@ -45,8 +45,8 @@ module "secondary_s3_bucket" {
       "Principal": "*",
       "Action": "s3:*",
       "Resource": [
-        "arn:aws:s3:::matrix-reload-secondary",
-        "arn:aws:s3:::matrix-reload-secondary/*"
+        "arn:aws:s3:::matrix-reload",
+        "arn:aws:s3:::matrix-reload/*"
       ],
       "Condition": {
         "Bool": {

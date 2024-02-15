@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "go.fullname" . }}
+  labels:
+    {{- include "go.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt"
+spec:
+  rules:
+    - host: descoshop.stg.descomplica.com.br
+      http:
+        paths:
+          - path: /descoshop
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "go.fullname" . }}
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - descoshop.stg.descomplica.com.br
+      secretName: {{ include "go.fullname" . }}-go-tls

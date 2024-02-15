@@ -1,13 +1,9 @@
-FROM node:18
-
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
-RUN npm install
-
+FROM golang:1.21.0-alpine3.18 as builder
+WORKDIR /build
 COPY . .
+RUN go build -o webtest
 
-EXPOSE 8080
-
-CMD [ "node", "server.js" ]
+FROM alpine:3.18 as prod
+WORKDIR /app
+COPY --from=builder /build/webtest .
+CMD [ "./webtest" ]
