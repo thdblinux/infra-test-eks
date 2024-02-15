@@ -234,7 +234,7 @@ Anote o nome do pod que corresponde ao PostgreSQL, por exemplo, kube-news-postgr
 Use o comando kubectl exec para acessar o shell do PostgreSQL:
 
 ```sh
-kubectl exec -it kube-news-postgre-6876f6bf75-9nxm9 -- psql -U descoshop -d descoshop-stg
+kubectl exec -it postgre-6876f6bf75-9nxm9 -- psql -U descoshop -d descoshop-stg
 ```
 
 Passo 1: Obter o nome do pod PostgreSQL
@@ -243,14 +243,14 @@ Use o seguinte comando para listar os pods em execução no seu cluster e encont
 ```sh
 kubectl get pods
 ```
-Anote o nome do pod que corresponde ao PostgreSQL, por exemplo, kube-news-postgre-6876f6bf75-9nxm9.
+Anote o nome do pod que corresponde ao PostgreSQL, por exemplo, postgre-6876f6bf75-9nxm9.
 
 Passo 2: Acessar o shell do PostgreSQL
 
 Use o comando kubectl exec para acessar o shell do PostgreSQL:
 
 ```sh
-kubectl exec -it kube-news-postgre-6876f6bf75-9nxm9 -- psql -U descoshop -d descoshop-stg
+kubectl exec -it postgre-6876f6bf75-9nxm9 -- psql -U postgres-prod -d descoshop
 ```
 Isso abrirá o shell interativo do PostgreSQL para o banco de dados descoshop-stg usando o usuário descoshop.
 
