@@ -349,16 +349,18 @@ Todos esses componentes podem ser instalados usando um manifesto fornecido pelo 
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.4.7/manifests/install.yaml
 ```
-2.Expose argocd-server
 
 ```sh
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 ```
 
-3.Login
 
 ```sh
 export ARGOCD_SERVER=`kubectl get svc argocd-server -n argocd -o json | jq --raw-output '.status.loadBalancer.ingress[0].hostname'`
+```
+
+```sh
+export ARGO_PWD=`kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 ```
 
 ```sh
@@ -368,11 +370,11 @@ echo $ARGOCD_SERVER
 ```sh
 echo $ARGO_PWD
 ```
-5.Defina seu repositório GitHub como fonte no Argocd:
+- Defina seu repositório GitHub como fonte no Argocd:
 
 Depois de instalar o ArgoCD, você precisa configurar seu repositório GitHub como fonte para a implantação do seu aplicativo. Isso normalmente envolve configurar a conexão com o seu repositório e definir a fonte do seu aplicativo ArgoCD. As etapas específicas dependerão de sua configuração e requisitos.
 
-6.Crie um aplicativo ArgoCD:
+- Crie um aplicativo ArgoCD:
 
 - `name`:Defina o nome do seu aplicativo.
 - `destination`: Defina o destino onde seu aplicativo deve ser implantado.
