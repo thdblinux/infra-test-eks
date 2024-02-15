@@ -1,0 +1,44 @@
+go:
+tag: "1.21"
+service:
+  port: 8080
+  type: ClusterIP
+  targetPort: 8080
+  selector:
+    app: descoshop
+replicas:
+  min: 1
+  max: 4
+resources:
+  requests:
+    cpu: "200m"
+    memory: "192Mi"
+  limits:
+    cpu: "400m"
+    memory: "512Mi"
+image:
+  repository: thsre/descoshop
+  tag: latest
+
+
+ingress:
+  ingressClassName: "" 
+  enabled: false
+  name: descoshop
+  annotations:
+    nginx.ingress.kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt"
+  tls:
+    - hosts:
+        - descoshop.stg.descomplica.com.br
+      secretName: descoshop-tls
+  rules:
+    - http:
+        paths:
+          - path: /descoshop
+            pathType: Prefix
+            backend:
+              service:
+                name: descoshop
+                port:
+                  number: 80

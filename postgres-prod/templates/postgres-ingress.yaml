@@ -1,0 +1,28 @@
+{{ if .Values.postgre.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.annotations.certManagerClusterIssuer }}
+spec:
+  ingressClassName: {{ .Values.postgre.ingress.className }}
+  rules:
+  {{- range.Values.postgre.ingress.hosts }}
+  tls:
+  - hosts:
+    - {{ . }}
+    secretName: {{ . }}descoshop-tls
+  - host: {{ . }}
+    http:
+      paths:
+      - path: /descoshop
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ $.Release.Name }}-descoshop
+            port:
+              number: {{ .Values.postgre.service.port }}
+  {{- end }}
+{{ end }}

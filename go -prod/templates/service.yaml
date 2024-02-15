@@ -8,8 +8,7 @@ spec:
   selector:
     app: {{ include "go.fullname" . }}
   ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
       name: http
   type: ClusterIP

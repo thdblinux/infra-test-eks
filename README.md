@@ -22,7 +22,7 @@ git clone https://github.com/thdevopssre/infra-test-eks.git
 - Acesse o diretório onde estão os arquivos do Terraform para criar o cluster EKS de stage.
 - 
 ```sh
-cd /terraform/stg
+cd /EKS/stg
 ```
 - Agora no diretorio do arquivos do Terraform vamos usar os comando para cria o cluster.
 
@@ -198,7 +198,7 @@ OBS:: Nos ambientes de Produção, não declaramos "staging" dentro do endereço
 
 1.Instalar um release:
 ```sh
-helm install kube-news ./descoshop
+helm install go-stg ./descoshop
 ```
 
 2.Listar as releases:
@@ -207,7 +207,7 @@ helm list
 ```
 3.Verificar o Status do release:
 ```sh
- helm status kube-news 
+ helm status <nome da release>
 ```
 
 4.Verificar o pod associado a release:
@@ -215,10 +215,9 @@ helm list
 ```sh
 kubectl get pods
 ```
-5.kubectl exec -it nome-do-pod -- env
 
 ```sh
-kubectl exec -it nome-do-pod -- env
+kubectl exec -it <nome-do-pod> -- env
 ```
 
 ### Para testar a conexão com o banco de dados PostgreSQL, acessar o shell e criar uma tabela usando kubectl exec, você pode seguir os seguintes passos:
@@ -237,7 +236,6 @@ Use o comando kubectl exec para acessar o shell do PostgreSQL:
 ```sh
 kubectl exec -it kube-news-postgre-6876f6bf75-9nxm9 -- psql -U descoshop -d descoshop-stg
 ```
-
 
 Passo 1: Obter o nome do pod PostgreSQL
 
@@ -282,61 +280,13 @@ Isso criará a tabela `config` e inserirá os dados fornecidos.
 SELECT * FROM config;
 ```
 
-<<<<<<< HEAD
 **Step-4:Criando o CI com O Github Actions**
 
 Com o nosso cluster provisionado, agora podemos focar na criação da Pipeline. Usaremos o Github Actions como ferramenta de CI para realizar a integração com o cluster e com a nossa aplicação.
 
-```yaml
-name: Build and push Docker image to Docker registry
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v2.0
-        with:
-          version: 'v1.29.0'
-        id: install
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Docker build and push
-        run: |
-          docker build -t node-app .
-          docker tag node-app thsre/node-app:latest
-          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker push thsre/node-app:latest
-        env:
-          DOCKER_CLI_ACI: 1
-
-      - name: Update kubeconfig
-        run: aws eks update-kubeconfig --name matrix-prod --region us-east-1
-
-      - name: Deploy nodejs Helm chart to EKS
-        run: |
-          helm install kube-news ./descoshop
-          helm install nodeapp ./node-app
-```
 - configure as secrets e variables do cloud provider e do registry da imagem Docker no Actions do Github.
 - Settings => actions => Secrets and variables => Actions => New repository secret
   
-
-**Step-4:Criando o CI com Github Actions**
 
 Com o nosso cluster provisionado, agora podemos focar na criação da Pipeline. Usaremos o Github Actions como ferramenta de CI para realizar a integração com o cluster e com a nossa aplicação.
 
@@ -385,8 +335,8 @@ jobs:
 
       - name: Deploy nodejs Helm chart to EKS
         run: |
-          helm install kube-news ./descoshop
-          helm install nodeapp ./node-app 
+          helm install descoshop ./go-prod
+          helm install postgresql ./postgres-prod
  ```
 
 **Step-3:** **Deploy da Aplicação com ArgoCD**
@@ -408,9 +358,6 @@ kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}
 3.Login
 
 ```sh
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
-```
-```sh
 export ARGOCD_SERVER=`kubectl get svc argocd-server -n argocd -o json | jq --raw-output '.status.loadBalancer.ingress[0].hostname'`
 ```
 
@@ -421,7 +368,7 @@ echo $ARGOCD_SERVER
 ```sh
 echo $ARGO_PWD
 ```
-5.Defina seu repositório GitHub como fonte:
+5.Defina seu repositório GitHub como fonte no Argocd:
 
 Depois de instalar o ArgoCD, você precisa configurar seu repositório GitHub como fonte para a implantação do seu aplicativo. Isso normalmente envolve configurar a conexão com o seu repositório e definir a fonte do seu aplicativo ArgoCD. As etapas específicas dependerão de sua configuração e requisitos.
 
@@ -466,9 +413,9 @@ As informações de conexão ao banco de dados devem ser protegidas usando recur
 
 **Entregáveis:**
 
--  Arquivos Terraform para configurar o EKS,VPC, bucket S3.
-- Configurações da pipeline CI/CD Jenkins.
-- Arquivos de configuração da aplicação no Kubernetes (Helm templates, values, etc.).
+- Arquivos Terraform para configurar o EKS,VPC, bucket S3.
+- Configurações da pipeline CI/CD Github Actions.
+- Arquivos de configuração da aplicação no Kubernetes (Helm templates, values, deployment, service. ingress ).
 - Documentação detalhada dos passos executados.
 
 **Tecnologias Utilizadas:**
@@ -483,7 +430,7 @@ Kubernetes, Docker, Terraform, Helm, Git && GitHub Actions CI, CD Argocd, e recu
 - [Terraform AWS Provider Workspace Resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/workspaces_workspace)
 - [Terraform AWS Getting Started](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/aws-variables)
 - [Terraform AWS Resource Tagging Guide](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/guides/resource-tagging)
-- [Helm Installation Guide](https://helm.sh/docs/intro/install/)
+- [Helm Docs](https://helm.sh/docs/intro/install/)
 - [Terraform AWS VPC Module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/2.15.0)
 - [Terraform AWS EKS Module](https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest)
 - [Terraform AWS S3 Bucket Module](https://registry.terraform.io/modules/terraform-aws-modules/s3-bucket/aws/latest)
@@ -506,6 +453,8 @@ Kubernetes, Docker, Terraform, Helm, Git && GitHub Actions CI, CD Argocd, e recu
 ## Para saber mais sobre Kubernetes, containers e instalações de componentes em outros sistemas operacionais, consulte o Livro Gratuito Descomplicando o Kubernetes.
 
 [Descomplicando o Kubernetes - Livro Gratuito](https://livro.descomplicandokubernetes.com.br/?utm_medium=social&utm_source=linktree&utm_campaign=livro+descomplicando+o+kubernetes+gratuito)
+
+[Descomplicando o Docker - Livro Gratuito](https://livro.descomplicandodocker.com.br/chapters/chapter_01.html)
 
 
 # Postmortem SLA, SLO, SLI e Erro Budget
