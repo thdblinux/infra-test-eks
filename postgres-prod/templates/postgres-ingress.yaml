@@ -13,15 +13,15 @@ spec:
   tls:
   - hosts:
     - {{ . }}
-    secretName: {{ . }}descoshop-tls
+    secretName: {{ . }}postgre-tls
   - host: {{ . }}
     http:
       paths:
-      - path: /descoshop
+      - path: /postgre
         pathType: Prefix
         backend:
           service:
-            name: {{ $.Release.Name }}-descoshop
+            name: {{ $.Release.Name }}-postgre
             port:
               number: {{ .Values.postgre.service.port }}
   {{- end }}

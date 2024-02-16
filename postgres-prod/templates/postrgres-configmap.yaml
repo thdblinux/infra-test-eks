@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-postgres-configmap
+  name: {{ .Release.Name }}-postgre-configmap
 data:
   POSTGRES_DB: {{ .Values.postgre.credentials.dbName | quote }}
   POSTGRES_USER: {{ .Values.postgre.credentials.userName | quote }}
