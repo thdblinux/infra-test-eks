@@ -27,12 +27,10 @@ resource "aws_iam_policy_attachment" "eks_cluster_policy_cni_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 
-# Get default VPC id
 data "aws_vpc" "default" {
   default = true
 }
 
-# Get public subnets in VPC
 data "aws_subnets" "public" {
   filter {
     name   = "vpc-id"
@@ -80,7 +78,6 @@ resource "aws_iam_role_policy_attachment" "matrix-AmazonEC2ContainerRegistryRead
 }
 
 
-# Create managed node group
 resource "aws_eks_node_group" "matrix" {
   cluster_name    = aws_eks_cluster.eks.name
   node_group_name = "NODE-STG"
