@@ -3,13 +3,13 @@ postgre:
   credentials:
     usePwd: "tonystark@123"
     userName: "descoshop"
-    dbName: "descoshop-stg"
+    dbName: "descoshop-prod"
   service:
     type: LoadBalancer
     port: 5432
     targetPort: 5432
     selector: 
-      app: descoshop-stg-rds
+      app: descoshop-prod-rds
   replicas:
     min: 4
     max: 10
@@ -27,7 +27,7 @@ postgre:
 
 ingress:
   enabled: true
-  name: descoshop-stg-rds
+  name: descoshop-prod-rds
   spec:
     ingressClassName: ""
     annotations:
@@ -35,15 +35,15 @@ ingress:
       cert-manager.io/cluster-issuer: "letsencrypt"
     tls:
       - hosts:
-          - descoshop-stg.rds.aws.amazon.com
+          - descoshop-prod.rds.aws.amazon.com
         secretName: descoshop-rds-tls
     rules:
       - http:
           paths:
-            - path: /descoshop-stg-rds
+            - path: /descoshop-prod-rds
               pathType: Prefix
               backend:
                 service:
-                  name: descoshop-stg-rds
+                  name: descoshop-prod-rds
                   port:
                     number: 80
