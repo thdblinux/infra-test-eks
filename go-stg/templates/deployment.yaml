@@ -1,18 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "go.fullname" . }}-go
-  labels:
-    {{- include "go.labels" . | nindent 4 }}-go
+  name: {{ .Release.Name }}-go
 spec:
   replicas: {{ .Values.replicas.min }}
   selector:
     matchLabels:
-      app: {{ include "go.fullname" . }}-go
+      app: {{ .Release.Name }}-go
   template:
     metadata:
       labels:
-        app: {{ include "go.fullname" . }}-go
+        app: {{ .Release.Name }}-go
     spec:
       containers:
         - name: {{ .Chart.Name }}

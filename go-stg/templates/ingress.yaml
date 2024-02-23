@@ -3,19 +3,18 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "go.fullname" . }}
-  labels:
-    {{- include "go.labels" . | nindent 4 }}
+  name: {{ .Release.name }}
   annotations:
-    nginx.ingress.kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: "letsencrypt"
+    nginx.ingress.kubernetes.io/ingress.class: {{ .Values.ingress.annotations }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.annotations.certManagerClusterIssuer }}
 spec:
-  ingressClassName:
+  ingressClassName: {{ .Values.go.ingress.className }}
   rules:
+  {{- range.Values.go.ingress.hosts }}
   tls:
     - hosts:
-        - {{ . }}
-      secretName: {{ include "go.fullname" . }}-go-tls
+      - {{ . }}
+      secretName: {{ . }}-go-tls
     - host: {{ . }}
       http:
         paths:
@@ -23,7 +22,8 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ include "go.fullname" . }}
+                name: {{ $.Release.Name }}-go
                 port:
                   number: {{ .Values.service.port }}
+  {{- end }}
 {{ end }}
