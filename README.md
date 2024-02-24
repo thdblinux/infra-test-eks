@@ -383,6 +383,16 @@ Depois de instalar o ArgoCD, você precisa configurar seu repositório GitHub co
 - `project`: Especifique o projeto ao qual o aplicativo pertence.
 - `source`: defina a origem do seu aplicativo, incluindo a URL do repositório GitHub, a revisão e o caminho para o aplicativo dentro do repositório.
 - `syncPolicy`: Configure a política de sincronização, incluindo sincronização automática, remoção e autocorreção.
+  
+  <br>
+`app`
+![app](https://github.com/thdevopssre/infra-test-eks/assets/151967060/7c7ce167-6a39-49bb-9d64-aa7f00117e41)
+
+<br>
+
+`postgresql`
+![postgresql](https://github.com/thdevopssre/infra-test-eks/assets/151967060/42197f80-2cb1-4656-9b88-53a4635e7c0f)
+
 
 PS: Se tudo ocorrer perfeitamente bem no ambiente de `stage,` agora podemos repetir o mesmo processo para construir o ambiente de `produção`.
 
