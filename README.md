@@ -1,6 +1,6 @@
 # Projeto: Criação de uma Infraestrutura para Ambientes de Stage e Produção na AWS, usando EKS.
-![project-infra](https://github.com/thdevopssre/infra-test-eks/assets/151967060/d59c6d8b-cd97-4a63-ad24-20b6a2f41034)
 
+![Untitled Diagram](https://github.com/thdevopssre/infra-test-eks/assets/151967060/d16d32fa-a8c0-477d-ae71-906c81bdfb0e)
 
 ## Pré-requisitos para criar o ambiente
 
