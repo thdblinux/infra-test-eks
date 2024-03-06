@@ -26,7 +26,8 @@ jobs:
         
       - name: Install Docker Scout
         run: |
-          wget https://github.com/aquasecurity/scout/releases/latest/download/scout_linux_amd64
+          SCOUT_VERSION=$(curl -s https://api.github.com/repos/aquasecurity/scout/releases/latest | grep "tag_name" | cut -d'"' -f4)
+          wget https://github.com/aquasecurity/scout/releases/download/${SCOUT_VERSION}/scout_linux_amd64
           chmod +x scout_linux_amd64
           mkdir -p $HOME/bin
           mv scout_linux_amd64 $HOME/bin/docker-scout
