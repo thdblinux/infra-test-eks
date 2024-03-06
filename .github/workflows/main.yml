@@ -32,7 +32,7 @@ jobs:
       - name: Docker build and push
         run: |
           # Run commands to build and push Docker images
-          docker build -t webtest:${VERSION} .
+          docker build -t webtest:latest .
           docker tag myntra thsre/webtest:latest
           docker push thsre/webtest:latest
         env:
