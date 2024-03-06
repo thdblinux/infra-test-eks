@@ -27,7 +27,7 @@ jobs:
         env:
           DOCKER_CLI_ACI: 1
 
-      - name: Deploy nodejs Helm chart to k8s
+      - name: Docker scout Image Scan
         run: |
-          helm install postgres ./descoshop
-          helm install node ./nodeapp 
+          docker-scout quickview thsre/node.app:latest
+          docker-scout cves thsre/node.app:latest
