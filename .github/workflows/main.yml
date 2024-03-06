@@ -33,7 +33,7 @@ jobs:
         run: |
           # Run commands to build and push Docker images
           docker build -t webtest:latest .
-          docker tag thsre/webtest:latest
+          docker tag webtest thsre/webtest:latest
           docker push thsre/webtest:latest
         env:
           DOCKER_CLI_ACI: 1
