@@ -1,38 +1,19 @@
-name: Build and push Docker image to Docker registry
-
+name: Build,Analyze,scan
 on:
   push:
     branches:
       - main
-
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  build-analyze-scan:
+    name: Build
+    runs-on: [self-hosted]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v2.0
+        uses: actions/checkout@v2
         with:
-          version: 'v1.29.0'
-        id: install
-
-      - name: Docker Scout Scan
-        run: |
-          docker-scout quickview fs://.
-          docker-scout cves fs://.
-
-      - name: Docker build and push
-        run: |
-          docker build -t node-app .
-          docker tag node-app thsre/node-app:latest
-          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker push thsre/node-app:latest
+          fetch-depth: 0  
+      - name: Build and analyze with SonarQube
+        uses: sonarsource/sonarqube-scan-action@master
         env:
-          DOCKER_CLI_ACI: 1
-
-      - name: Docker scout Image Scan
-        run: |
-          docker-scout quickview thsre/node.app:latest
-          docker-scout cves thsre/node.app:latest
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
