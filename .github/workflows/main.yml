@@ -18,6 +18,11 @@ jobs:
           version: 'v1.29.0'
         id: install
 
+      - name: Docker Scout Scan
+        run: |
+          docker-scout quickview fs://.
+          docker-scout cves fs://.
+
       - name: Docker build and push
         run: |
           docker build -t node-app .
