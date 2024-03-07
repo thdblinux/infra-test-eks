@@ -1,15 +1,17 @@
 # Projeto: Criação de uma Infraestrutura para Ambientes de Stage e Produção na AWS, usando EKS.
 
-![Untitled Diagram](https://github.com/thdevopssre/infra-test-eks/assets/151967060/d16d32fa-a8c0-477d-ae71-906c81bdfb0e)
+![infra-eks](https://github.com/thdevopssre/infra-test-eks/assets/151967060/864505b9-377a-4538-8215-ecbd92d49ac2)
 
 ## Pré-requisitos para criar o ambiente
 
 - Conta na AWS
 - Credenciais do IAM
-- AWS CLI instalado 
-- Helm instalado
+- AWS CLI
+- Helm
+- Trivy
 - Git
-- Docker 
+- Docker
+- Docker Scout
 - Kubectl
 - Terraform
 
@@ -434,13 +436,16 @@ As informações de conexão ao banco de dados devem ser protegidas usando recur
 
 **Tecnologias Utilizadas:**
 
-Kubernetes, Docker, Terraform, Helm, Git && GitHub Actions CI, CD Argocd, e recursos AWS.
+Kubernetes, Docker, Terraform, Helm, Redis, Trivy, Docker Scout,  Git && GitHub Actions CI, CD Argocd, e recursos AWS.
 
 ## Links úteis para a documentação das tecnologias utilizadas no projeto:
 
 - [Docker Builder Reference](https://docs.docker.com/engine/reference/builder/)
+- [Docker Scout](https://docs.docker.com/scout/install/)
 - [Docker Postgres Sample](https://docs.docker.com/samples/postgres/)
 - [Docker Postgres Image](https://hub.docker.com/_/postgres)
+- [Acqua Security Tryvi](https://aquasecurity.github.io/trivy/v0.49/)
+- [Redis](https://redis.io/)
 - [Terraform AWS Provider Workspace Resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/workspaces_workspace)
 - [Terraform AWS Getting Started](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/aws-variables)
 - [Terraform AWS Resource Tagging Guide](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/guides/resource-tagging)
