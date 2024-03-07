@@ -61,6 +61,66 @@ Lembre-se de substituir `NOME_DO_CLUSTER` e `SUA_REGIAO_AWS` pelos valores espec
 ```sh
 aws eks update-kubeconfig --region region-code --name my-cluster
 ``` 
+**Step-1: **Segurança** 
+
+1.nstale SonarQube e Trivy:
+
+ - Instale SonarQube e Trivy na instância EC2 para verificar vulnerabilidades.
+   ```sh
+   docker run -d --name sonar -p 9000:9000 sonarqube:lts-community
+   ```
+Acessar:
+
+publicIP:9000 (por padrão, nome de usuário e senha são admin)
+
+Para instalar o Trivy:
+
+```sh
+sudo apt-get install wget apt-transport-https gnupg lsb-release
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+sudo apt-get update
+sudo apt-get install trivy        
+```
+para fazer o escaner da imagem usando trivy:
+```sh
+trivy image <imageid>
+```
+2.Para instalar o docker scout
+Script
+
+vim docker.sh
+
+```sh
+./docker.sh
+```
+
+```sh
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s -- -b /usr/local/bin
+sudo usermod -aG docker ubuntu
+newgrp docker
+sudo chmod 777 /var/run/docker.sock
+```
+
+3.Integre SonarQube e configure:
+
+Integre o SonarQube a sua pipeline de CI/CD.
+Configure o SonarQube para analisar o código em busca de problemas de qualidade e segurança.
+
+
 
 **Step-2:** **Configurando O  Ingress-Nginx Controller e o cert-manager**
 
@@ -74,7 +134,7 @@ Ao implementar essas soluções em conjunto, o `Ingress-Nginx Controller`e o `Ce
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/aws/deploy.yaml
 ```
-1.**Instalar o Ingress-Nginx Controller com Helm**
+Instalar o Ingress-Nginx Controller com Helm**
    
 É recomendado que no ambiente de produção o Ingress-Nginx Controller seja instalado com Helm se estiver usando algum provedor de Nuvem.
 
@@ -89,7 +149,7 @@ helm upgrade --install ingress-nginx ingress-nginx \
 Este comando instalará o controlador Ingress-Nginx no namespace ingress-nginx e criará o namespace se ele ainda não existir.
 Este comando é idempotente, o que significa que ele instalará o controlador se ainda não estiver instalado ou o atualizará se já estiver instalado.
 
-2.**Verificar a instalação:**
+Verificar a instalação:
 
 ```sh
 kubectl wait --namespace ingress-nginx \
@@ -285,7 +345,7 @@ Isso criará a tabela `config` e inserirá os dados fornecidos.
 SELECT * FROM config;
 ```
 
-**Step-4:Criando o CI com O Github Actions**
+**Step-5:Criando o CI com O Github Actions**
 
 Com o nosso cluster provisionado, agora podemos focar na criação da Pipeline. Usaremos o Github Actions como ferramenta de CI para realizar a integração com o cluster e com a nossa aplicação.
 
@@ -301,39 +361,66 @@ Configure as credenciais do Docker e do EKS para permitir que o Github Actions i
  ```yaml
 name: Build and push Docker image to Docker registry
 
+name: Build, Analyze, and Scan
+
 on:
   push:
     branches:
       - main
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  build-analyze-scan:
+    name: Build, Analyze, and Scan
+    runs-on: [self-hosted]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v2.0
+        uses: actions/checkout@v2
         with:
-          version: 'v1.29.0'
-        id: install
+          fetch-depth: 0
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+      - name: Build and analyze with SonarQube
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Docker Login
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+        
+      - name: Trivy file scan
+        run: trivy fs . > trivyfs.txt
+        
+      - name: Docker Scout Scan
+        run: |
+          docker-scout quickview fs://.
+          docker-scout cves fs://.
 
       - name: Docker build and push
         run: |
-          docker build -t node-app .
-          docker tag node-app thsre/node-app:latest
-          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker push thsre/node-app:latest
+          # Run commands to build and push Docker images
+          docker build -t webtest:latest .
+          docker tag webtest thsre/webtest:latest
+          docker push thsre/webtest:latest
         env:
           DOCKER_CLI_ACI: 1
+
+      - name: Image scan
+        run: trivy image thsre/webtest:latest > trivyimage.txt
+
+      - name: Docker Scout Image Scan
+        run: |
+          docker-scout quickview thsre/webtest:latest
+          docker-scout cves thsre/webtest:latest
+
+  deploy:
+    needs: build-analyze-scan
+    runs-on: [self-hosted]
+    steps:
+      - name: Docker Pull Image
+        run: docker pull thsre/webtest:latest
+
+      - name: Deploy to Container
+        run: docker run -d --name game -p 8080:8080 thsre/webtest:latest
 
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --name matrix-prod --region us-east-1
@@ -395,6 +482,17 @@ Depois de instalar o ArgoCD, você precisa configurar seu repositório GitHub co
 
 `postgresql`
 ![postgresql](https://github.com/thdevopssre/infra-test-eks/assets/151967060/42197f80-2cb1-4656-9b88-53a4635e7c0f)
+
+`Sonarqube`
+![code1](https://github.com/thdevopssre/infra-test-eks/assets/151967060/80c5de13-fafd-4043-a63a-c83a4fa638f9)
+
+![code2](https://github.com/thdevopssre/infra-test-eks/assets/151967060/357a2b5e-bf7f-4a6b-8168-06c2cc4b9c21)
+
+![code3](https://github.com/thdevopssre/infra-test-eks/assets/151967060/5072b1b2-eb87-4c70-ab03-6c02670283e6)
+
+
+
+
 
 
 PS: Se tudo ocorrer perfeitamente bem no ambiente de `stage,` agora podemos repetir o mesmo processo para construir o ambiente de `produção`.
