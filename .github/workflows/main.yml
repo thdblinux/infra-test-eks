@@ -58,3 +58,8 @@ jobs:
 
       - name: Deploy to Container
         run: docker run -d --name game -p 8080:8080 thsre/webtest:latest
+
+      - name: Deploy  Helm chart to Cluster
+        run: |
+          helm install postgres ./descoshop
+          helm install node ./nodeapp
