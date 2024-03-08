@@ -31,7 +31,6 @@ jobs:
         run: |
           docker-scout quickview fs://.
           docker-scout cves fs://.
-
       - name: Docker build and push
         run: |
           # Run commands to build and push Docker images
@@ -48,7 +47,6 @@ jobs:
         run: |
           docker-scout quickview thsre/webtest:latest
           docker-scout cves thsre/webtest:latest
-
   deploy:
     needs: build-analyze-scan
     runs-on: [self-hosted]
@@ -58,3 +56,8 @@ jobs:
 
       - name: Deploy to Container
         run: docker run -d --name game -p 8080:8080 thsre/webtest:latest
+
+      - name: Deploy to Helm Chart cluster
+        run: |
+          helm install descoshop ./go-prod
+          helm install postgresql ./postgres-prod
