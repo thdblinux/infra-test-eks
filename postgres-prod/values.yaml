@@ -47,3 +47,4 @@ ingress:
                   name: descoshop-prod-rds
                   port:
                     number: 80
+

@@ -1,9 +1,10 @@
 go:
 tag: "1.21"
 service:
-  port: 8080
-  type: ClusterIP
-  targetPort: 8080
+  port: 80
+  type: NodePort
+  targetPort: 80
+  nodePort: 30007
   selector:
     app: descoshop
 replicas:
@@ -17,7 +18,7 @@ resources:
     cpu: "400m"
     memory: "512Mi"
 image:
-  repository: thsre/descoshop
+  repository: thsre/webtest
   tag: latest
 
 

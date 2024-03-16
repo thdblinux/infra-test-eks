@@ -431,7 +431,7 @@ jobs:
           helm install postgresql ./postgres-prod
  ```
 
-**Step-3:** **Deploy da Aplicação com ArgoCD**
+**Step-6:** **Deploy da Aplicação com ArgoCD**
 
 Instale o ArgoCD:
 
@@ -473,6 +473,11 @@ Depois de instalar o ArgoCD, você precisa configurar seu repositório GitHub co
 - `project`: Especifique o projeto ao qual o aplicativo pertence.
 - `source`: defina a origem do seu aplicativo, incluindo a URL do repositório GitHub, a revisão e o caminho para o aplicativo dentro do repositório.
 - `syncPolicy`: Configure a política de sincronização, incluindo sincronização automática, remoção e autocorreção.
+
+
+**Step-7:** **Monitoramento**
+
+
   
   <br>
 `app`
