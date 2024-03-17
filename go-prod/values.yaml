@@ -8,8 +8,8 @@ service:
   selector:
     app: descoshop
 replicas:
-  min: 1
-  max: 2
+  min: 4
+  max: 10
 resources:
   requests:
     cpu: "200m"
