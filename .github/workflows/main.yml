@@ -58,7 +58,7 @@ jobs:
         run: docker run -d --name game -p 8080:8080 thsre/webtest:latest
 
       - name: Update Kubeconfig
-        run: aws eks update-kubeconfig --name matrix-prod --region us-east-1
+        run: aws eks update-kubeconfig --name MATRIX-PROD --region us-east-1
 
       - name: Deploy to Helm Chart cluster
         run: |
