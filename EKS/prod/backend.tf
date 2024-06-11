@@ -1,6 +1,6 @@
 provider "aws" {
   alias  = "s3_bucket_provider"
-  region = "us-east-1"
+  region = var.region
 }
 
 module "secondary_s3_bucket" {
