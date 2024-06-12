@@ -39,7 +39,7 @@ data "aws_subnets" "public" {
 }
 
 resource "aws_eks_cluster" "eks" {
-  name     = "MATRIX-PROD"
+  name     = "MATRIX-PR"
   role_arn = aws_iam_role.eks_cluster.arn
 
   vpc_config {
@@ -80,14 +80,14 @@ resource "aws_iam_role_policy_attachment" "matrix-AmazonEC2ContainerRegistryRead
 
 resource "aws_eks_node_group" "matrix" {
   cluster_name    = aws_eks_cluster.eks.name
-  node_group_name = "NODE-PROD"
+  node_group_name = "NODE-PR"
   node_role_arn   = aws_iam_role.matrix.arn
 
   subnet_ids = data.aws_subnets.public.ids
   scaling_config {
-    desired_size = 2
+    desired_size = 1
     max_size     = 2
-    min_size     = 2
+    min_size     = 1
   }
   instance_types = ["t3.medium"]
 
@@ -98,7 +98,7 @@ resource "aws_eks_node_group" "matrix" {
     aws_eks_cluster.eks
   ]
   tags = {
-    Name        = "MATRIX-PROD"
+    Name        = "MATRIX-PR"
     Environment = "PRODUCTION"
   }
 }
